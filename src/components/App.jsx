@@ -6,6 +6,8 @@ import PreloaderWrapper from "@components/PreloaderWrapper";
 import StageRoute from "./StageRoute";
 import UserRoute from "./UserRoute";
 import StageRedirect from "./StageRedirect";
+import { SignUpPage } from "@pages/SignUp";
+import { LoginPage } from "@pages/Login";
 
 const App = () => (
   <SnackbarProvider maxSnack={3} autoHideDuration={5000}>
