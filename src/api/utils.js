@@ -1,6 +1,9 @@
 import * as axios from "axios";
-import { Ip } from "@config";
 import Qs from "qs";
+
+const ip = process.env.REACT_APP_BACKEND_URL;
+console.warn(process.env);
+console.warn(process.env);
 
 const defaultHeaders = {};
 
@@ -13,13 +16,13 @@ const okOnly = (status) => status === 200;
 
 export const basicAxios = () =>
   axios.create({
-    baseURL: Ip(),
+    baseURL: ip,
     headers: defaultBodyHeaders,
     validateStatus: okOnly,
   });
 
 export const mainAxios = axios.create({
-  baseURL: Ip(),
+  baseURL: ip,
   headers: defaultBodyHeaders,
   validateStatus: okOnly,
   paramsSerializer: (params) => Qs.stringify(params, { arrayFormat: "repeat" }),

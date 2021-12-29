@@ -5,15 +5,13 @@ import { useParams } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
-import { parseError } from "./parse";
-
 export const useMySnackbar = () => {
   const { enqueueSnackbar } = useSnackbar();
 
   const enqueueError = useCallback(
     (msg, params) => {
       console.error(msg);
-      enqueueSnackbar(parseError(msg), { ...params, variant: "error" });
+      enqueueSnackbar(msg, { ...params, variant: "error" });
     },
     [enqueueSnackbar]
   );

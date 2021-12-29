@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-import StageRoute from "../StageRoute";
+import StageRoute from "./StageRoute";
 
 /**
  * Works like Route from "react-router".

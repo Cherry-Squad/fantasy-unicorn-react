@@ -1,7 +1,6 @@
 import { createSelector } from "@reduxjs/toolkit";
 
 import { loggedInSelector, userIdSelector } from "@redux/auth";
-import { UserRole, UserState } from "@dictionary/user";
 
 export const usersSelector = (state) => state.users;
 
@@ -31,19 +30,9 @@ export const getUserStageSelector = createSelector(
     if (!user) {
       return null;
     }
-    const { emailValidated, userState, team, request, userRole } = user;
+    const { emailValidated } = user;
     if (!emailValidated) {
       return 0;
-    }
-    if (userRole === UserRole.USER) {
-      const unfilledForm = userState === UserState.REGISTERED;
-      if (unfilledForm) {
-        return 1;
-      }
-      const notInTeam = team === null && request === null;
-      if (notInTeam) {
-        return 2;
-      }
     }
     return 3;
   }

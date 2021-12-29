@@ -1,38 +1,63 @@
 import { setTokens } from "@redux/auth/actions";
 import { load, save, remove } from "./localStorage";
 
-export const localStorageSet = (store, tokensBag) => {
-  const { accessToken, client, uid, expiry } = tokensBag;
+const tokenValueKey = "token.value";
+const tokenClientKey = "token.client";
+const tokenUidKey = "token.uid";
+const tokenExpiryKey = "token.expiry";
+const userIdKey = "user.id";
 
-  save("token.value", accessToken);
-  save("token.client", client);
-  save("token.uid", uid);
-  save("token.expiry", expiry);
+export const localStorageSet = (authBag) => {
+  const {
+    token: { accessToken, client, uid, expiry },
+    user: { id },
+  } = authBag;
 
-  store.dispatch(setTokens(tokensBag));
+  save(tokenValueKey, accessToken);
+  save(tokenClientKey, client);
+  save(tokenUidKey, uid);
+  save(tokenExpiryKey, expiry);
+  save(userIdKey, id);
 };
 
 export const localStorageLoad = () => {
-  const accessToken = load("token.value");
-  const client = load("token.client");
-  const uid = load("token.uid");
-  const expiry = load("token.expiry");
+  const accessToken = load(tokenValueKey);
+  const client = load(tokenClientKey);
+  const uid = load(tokenUidKey);
+  const expiry = load(tokenExpiryKey);
+  const id = load(userIdKey);
 
-  if ([accessToken, client, uid, expiry].includes(null)) {
-    return {};
+  if ([accessToken, client, uid, expiry, id].includes(null)) {
+    return {
+      token: {
+        accessToken: null,
+        client: null,
+        uid: null,
+        expiry: null,
+      },
+      user: {
+        id: null,
+      },
+    };
   }
 
   return {
-    accessToken,
-    client,
-    uid,
-    expiry,
+    token: {
+      accessToken,
+      client,
+      uid,
+      expiry,
+    },
+    user: {
+      id,
+    },
   };
 };
 
 export const localStorageErase = () => {
-  remove("token.value");
-  remove("token.client");
-  remove("token.uid");
-  remove("token.expiry");
+  remove(tokenValueKey);
+  remove(tokenClientKey);
+  remove(tokenUidKey);
+  remove(tokenExpiryKey);
+  remove(userIdKey);
 };

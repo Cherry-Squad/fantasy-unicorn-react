@@ -1,19 +1,13 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import { Redirect } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 
 import { getSelfUserStageSelector } from "@redux/users";
 
 export const getStageRedirectTo = (stage) => {
   switch (stage) {
     case -1:
-      return "/user/login";
-    case 0:
-      return "/user/validate";
-    case 1:
-      return "/hacker-form/step1";
-    case 2:
-      return "/hacker-form/step2";
+      return "/login";
     default:
       return "/dashboard";
   }
@@ -24,7 +18,8 @@ const StageRedirect = ({ ...rest }) => {
 
   const to = getStageRedirectTo(stage);
 
-  return <Redirect to={to} {...rest} />;
+  // return <Redirect to={to} {...rest} />;
+  return <Navigate to={to} {...rest} />;
 };
 
 export default StageRedirect;

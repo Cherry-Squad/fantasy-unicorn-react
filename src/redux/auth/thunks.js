@@ -1,17 +1,24 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 
-import { localStorageSet } from "@utils/tokens";
-import { loginPost } from "@api/auth";
-import { getSelf } from "@redux/users";
+import { signInApi } from "@api/auth";
 
-export const login = createAsyncThunk(
+export const loginThunk = createAsyncThunk(
   "auth/login",
   async ({ email, password }, store) => {
     try {
-      const { data } = await loginPost(email, password);
-      localStorageSet(store, data);
-      await store.dispatch(getSelf());
-      return data;
+      const { data, headers } = await signInApi(email, password); //TODO: fix login
+      const authBag = {
+        token: {
+          accessToken: headers["Access-Token"],
+          client: headers["Client"],
+          uid: headers["Uid"],
+          expiry: headers["Expiry"],
+        },
+        user: {
+          id: data.data.id,
+        },
+      };
+      return authBag;
     } catch (e) {
       return store.rejectWithValue(e.response.data || e.message);
     }

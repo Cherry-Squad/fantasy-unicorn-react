@@ -1,22 +1,23 @@
 import { logout, setTokens } from "@redux/auth";
-import { loginTokensSelector } from "@redux/auth/selectors";
+import { loginTokenSelector } from "@redux/auth/selectors";
 
 import { mainAxios } from "./utils";
 
-const getTokensHelper = (store) => loginTokensSelector(store.getState());
+const getTokensHelper = (store) => loginTokenSelector(store.getState());
 
-const setTokensHelper = (store, { accessToken, client, uid }) =>
-  store.dispatch(setTokens({ accessToken, client, uid }));
+const setTokensHelper = (store, { accessToken, client, uid, expiry }) =>
+  store.dispatch(setTokens({ accessToken, client, uid, expiry }));
 
 const eraseTokensHelper = (store) => store.dispatch(logout());
 
 export const createWrappedApiInterceptor = (store) => {
   const trySetTokensToStore = (response) => {
-    const accessToken = response.headers["Access-Token"] || null;
-    const client = response.headers["Client"] || null;
-    const uid = response.headers["UID"] || null;
-    if (![accessToken, client, uid].includes(null)) {
-      setTokensHelper(store, { accessToken, client, uid });
+    const accessToken = response.headers["access-token"] || null;
+    const client = response.headers["client"] || null;
+    const uid = response.headers["uid"] || null;
+    const expiry = response.headers["expiry"] || null;
+    if (![accessToken, client, uid, expiry].includes(null)) {
+      setTokensHelper(store, { accessToken, client, uid, expiry });
     }
   };
 

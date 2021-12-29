@@ -2,15 +2,10 @@ import React from "react";
 import { useSelector } from "react-redux";
 
 import { getSelfUserStageSelector } from "@redux/users";
-import { Route } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 import StageRedirect from "@components/StageRedirect";
 
-const StageRoute = ({
-  stage: expectedStage,
-  path,
-  exact = false,
-  component,
-}) => {
+const StageRoute = ({ stage: expectedStage }) => {
   const stage = useSelector(getSelfUserStageSelector);
 
   const decision = (() => {
@@ -21,11 +16,7 @@ const StageRoute = ({
     }
   })();
 
-  return decision ? (
-    <Route path={path} exact={exact} component={component} />
-  ) : (
-    <StageRedirect from={path} exact={exact} />
-  );
+  return decision ? <Outlet /> : <StageRedirect />;
 };
 
 export default StageRoute;

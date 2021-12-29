@@ -12,6 +12,7 @@ export const emailPasswordSchema = yup.object().shape({
 });
 
 export const registrationSchema = emailPasswordSchema.shape({
+  username: yup.string().min(3).max(16).required(),
   confirmPassword: yup
     .string()
     .oneOf([yup.ref("password")], "Пароли не одинаковы")

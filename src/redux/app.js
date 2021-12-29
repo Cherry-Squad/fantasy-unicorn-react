@@ -5,12 +5,10 @@ import {
 } from "@reduxjs/toolkit";
 import { unwrapResult } from "@reduxjs/toolkit";
 
-import { getConfig, isErrorOnParseSelector } from "@redux/conf";
-import { getSelf } from "@redux/users";
-import { setTokens } from "@redux/auth/actions";
+import { usersGetSelfUserThunk } from "@redux/users";
+import { loadAuthBag } from "@redux/auth";
 import { logout } from "@redux/auth/slices";
 import { loggedInSelector } from "@redux/auth/selectors";
-import { tokens } from "@utils";
 
 const appSelector = (state) => state.app;
 
@@ -31,22 +29,16 @@ export const initApplication = createAsyncThunk(
     ) {
       return;
     }
-
-    dispatch(setTokens(tokens.localStorageLoad()));
-
     try {
-      await dispatch(getConfig()).then(unwrapResult);
-      if (isErrorOnParseSelector(getState())) {
-        throw new Error("parse error");
-      }
+      dispatch(loadAuthBag());
     } catch (e) {
-      console.log("Config loading error!", e);
-      return rejectWithValue(e);
+      console.log("FUCK!", e);
+      throw e;
     }
 
     if (loggedInSelector(getState())) {
       try {
-        await dispatch(getSelf()).then(unwrapResult);
+        await dispatch(usersGetSelfUserThunk()).then(unwrapResult);
       } catch (e) {
         console.error("User load error! Emitting logout...", e);
         if (loggedInSelector(getState())) dispatch(logout());
