@@ -32,7 +32,7 @@ export const initApplication = createAsyncThunk(
     try {
       dispatch(loadAuthBag());
     } catch (e) {
-      console.log("FUCK!", e);
+      console.log("Auth bag load error!", e);
       throw e;
     }
 

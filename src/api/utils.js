@@ -2,8 +2,6 @@ import * as axios from "axios";
 import Qs from "qs";
 
 const ip = process.env.REACT_APP_BACKEND_URL;
-console.warn(process.env);
-console.warn(process.env);
 
 const defaultHeaders = {};
 
