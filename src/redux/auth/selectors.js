@@ -12,9 +12,9 @@ export const loginTokenSelector = createSelector(
 export const loggedInSelector = createSelector(
   authSelector,
   (auth) =>
-    auth.userId !== 0 &&
+    auth.user.id > 0 &&
     auth.token.accessToken &&
-    Date.now() < new Date(auth.token.expiry)
+    Date.now() < new Date(+auth.token.expiry * 1000)
 );
 
 export const accessValidSelector = createSelector(

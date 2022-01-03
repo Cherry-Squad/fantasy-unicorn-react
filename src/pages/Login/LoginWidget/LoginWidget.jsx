@@ -1,6 +1,5 @@
 import React from "react";
 import {
-  Avatar,
   Button,
   Container,
   CssBaseline,
@@ -12,6 +11,7 @@ import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { unwrapResult } from "@reduxjs/toolkit";
+import { yupResolver } from "@hookform/resolvers/yup";
 
 import { loginThunk } from "@redux/auth/thunks";
 import { useMySnackbar } from "@utils/hooks";
@@ -23,8 +23,7 @@ import MyLink from "@components/MyLink";
 import CenteredMarginBox from "@components/CenteredMarginBox";
 import CenteredRoundBox from "@components/CenteredRoundBox";
 
-export default function LoginWidget({ redirectTo = "/dashboard" }) {
-  // const classes = useStyles();
+const LoginWidget = ({ redirectTo = "/" }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { enqueueError } = useMySnackbar();
@@ -32,7 +31,11 @@ export default function LoginWidget({ redirectTo = "/dashboard" }) {
     handleSubmit,
     control,
     formState: { isSubmitting },
-  } = useForm({ validationSchema: emailPasswordSchema });
+  } = useForm({
+    resolver: yupResolver(emailPasswordSchema),
+    mode: "all",
+    defaultValues: { email: "", password: "" },
+  });
 
   const onSubmit = ({ email, password }) =>
     dispatch(loginThunk({ email, password }))
@@ -41,7 +44,9 @@ export default function LoginWidget({ redirectTo = "/dashboard" }) {
         navigate(redirectTo, { replace: true });
       })
       .catch((e) => {
-        if (e.message.endsWith("401")) {
+        if (
+          e.errors?.includes("Invalid login credentials. Please try again.")
+        ) {
           enqueueError("Неверный email или пароль");
         } else {
           enqueueError("Возникла непредвиденная ошибка");
@@ -67,6 +72,7 @@ export default function LoginWidget({ redirectTo = "/dashboard" }) {
             label="Email"
             type="email"
             fullWidth
+            required
             autoComplete="username"
           />
           <FormTextField
@@ -106,4 +112,6 @@ export default function LoginWidget({ redirectTo = "/dashboard" }) {
       </CenteredMarginBox>
     </Container>
   );
-}
+};
+
+export default LoginWidget;

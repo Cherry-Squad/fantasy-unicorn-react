@@ -9,7 +9,7 @@ export const getStageRedirectTo = (stage) => {
     case -1:
       return "/login";
     default:
-      return "/dashboard";
+      return "/";
   }
 };
 

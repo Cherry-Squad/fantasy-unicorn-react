@@ -30,8 +30,8 @@
       "@validation/*": [
         "./src/validation/*"
       ],
-      "@dictionary/*": [
-        "./src/dictionary/*"
+      "@dict/*": [
+        "./src/dict/*"
       ],
       "@views/*": [
         "./src/views/*"

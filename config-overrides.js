@@ -8,7 +8,7 @@ const aliasMap = {
   "@utils": "src/utils",
   "@redux": "src/redux",
   "@validation": "src/validation",
-  "@dictionary": "src/dictionary",
+  "@dict": "src/dict",
   "@pages": "src/pages",
   "@views": "src/views",
 };

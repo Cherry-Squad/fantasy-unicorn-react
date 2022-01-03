@@ -17,4 +17,4 @@ export const signOutApi = () => mainAxios.delete("/auth/sign_out");
 
 export const deleteSelfUserApi = () => mainAxios.delete("/auth/");
 
-export const getSelfUserApi = () => mainAxios.get("/auth/");
+export const getSelfUserApi = () => mainAxios.get("/auth/validate_token");

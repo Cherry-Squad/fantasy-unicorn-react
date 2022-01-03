@@ -1,7 +1,9 @@
 import React from "react";
 import { CssBaseline, Grid, Paper } from "@mui/material";
+import { useDocumentTitle } from "@utils/hooks";
 
-export default function ImageWidgetPage({ children }) {
+export default function ImageWidgetPage({ title, children }) {
+  useDocumentTitle(title);
   return (
     <Grid container component="main" sx={{ height: "100vh" }}>
       <CssBaseline />
@@ -38,9 +40,9 @@ export default function ImageWidgetPage({ children }) {
   );
 }
 
-export const makePage = (WrappedComponent) => () => {
+export const makePage = (WrappedComponent, title) => () => {
   return (
-    <ImageWidgetPage>
+    <ImageWidgetPage title={title}>
       <WrappedComponent />
     </ImageWidgetPage>
   );

@@ -12,11 +12,16 @@ const FormCheckbox = ({
     <Controller
       name={name}
       control={control}
-      render={(props) => (
+      render={({
+        field: { onChange, onBlur, value, name, ref },
+        fieldState: { error },
+      }) => (
         <Checkbox
-          {...props}
-          checked={props.value}
-          onChange={(e) => props.onChange(e.target.checked)}
+          id={name}
+          checked={value}
+          onChange={(e) => onChange(e.target.checked)}
+          onBlur={onBlur}
+          inputRef={ref}
           {...fieldProps}
         />
       )}

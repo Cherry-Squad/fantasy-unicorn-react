@@ -12,6 +12,7 @@ import LockIcon from "@mui/icons-material/Lock";
 import { Navigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { unwrapResult } from "@reduxjs/toolkit";
+import { yupResolver } from "@hookform/resolvers/yup";
 
 import { usersCreateThunk } from "@redux/users";
 import { useMySnackbar } from "@utils/hooks";
@@ -32,7 +33,17 @@ export default function SignUpWidget() {
     handleSubmit,
     control,
     formState: { isSubmitting },
-  } = useForm({ validationSchema: registrationSchema });
+  } = useForm({
+    resolver: yupResolver(registrationSchema),
+    mode: "all",
+    defaultValues: {
+      username: "",
+      email: "",
+      password: "",
+      privacyPolicyAgreement: false,
+      confirmPassword: "",
+    },
+  });
 
   const onSubmit = ({ username, email, password }) =>
     dispatch(usersCreateThunk({ username, email, password }))
@@ -110,6 +121,7 @@ export default function SignUpWidget() {
                       name="privacyPolicyAgreement"
                       control={control}
                       type="checkbox"
+                      required
                     />
                   }
                   label="Я согласен с политикой конфиденциальности и на обработку моих персональных данных"
