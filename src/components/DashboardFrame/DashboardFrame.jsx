@@ -9,17 +9,18 @@ import List from "@mui/material/List";
 import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
-import Badge from "@mui/material/Badge";
 import Container from "@mui/material/Container";
 import Link from "@mui/material/Link";
 import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import NotificationsIcon from "@mui/icons-material/Notifications";
 import { mainListItems, secondaryListItems } from "./listItems";
 import { Outlet, useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { Button } from "@mui/material";
 import LogoutIcon from "@mui/icons-material/Logout";
+import { useMediaQuery } from "@mui/material";
+import PointsBadge from "@components/PointsBadge";
+import CoinsBadge from "@components/CoinsBadge";
+import { useSelector } from "react-redux";
+import { userIdSelector } from "@redux/auth";
 
 const Copyright = (props) => {
   return (
@@ -106,6 +107,8 @@ const DashboardContent = ({ children }) => {
   const toggleDrawer = () => {
     setOpen(!open);
   };
+  const largeScreen = useMediaQuery(mdTheme.breakpoints.up("sm"));
+  const userId = useSelector(userIdSelector);
 
   return (
     <ThemeProvider theme={mdTheme}>
@@ -138,6 +141,12 @@ const DashboardContent = ({ children }) => {
             >
               Fantasy Unicorn
             </Typography>
+            {largeScreen && (
+              <>
+                <PointsBadge userId={userId} />
+                <CoinsBadge userId={userId} />
+              </>
+            )}
             <LogoutButton />
           </Toolbar>
         </AppBar>
