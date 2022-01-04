@@ -8,7 +8,7 @@ const StatBadge = ({ icon: Icon, value }) => (
     sx={{
       display: "flex",
       m: 1,
-      width: "120px",
+      minWidth: "120px",
       height: "24px",
       alignContent: "center",
     }}
