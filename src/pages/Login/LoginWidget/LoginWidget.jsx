@@ -48,6 +48,14 @@ const LoginWidget = ({ redirectTo = "/" }) => {
           e.errors?.includes("Invalid login credentials. Please try again.")
         ) {
           enqueueError("Неверный email или пароль");
+        } else if (
+          e.errors?.some((v) =>
+            /A confirmation email was sent to your account at '.+'\. You must follow the instructions in the email before your account can be activated/.test(
+              v
+            )
+          )
+        ) {
+          navigate(`/email?email=${email}`);
         } else {
           enqueueError("Возникла непредвиденная ошибка");
         }

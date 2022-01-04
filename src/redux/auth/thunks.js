@@ -6,10 +6,12 @@ import {
   UID_HEADER,
   EXPIRY_HEADER,
 } from "@dict/headers";
-import { signInApi } from "@api/auth";
+import { signInApi, resendConfirmationMailApi } from "@api/auth";
 import { normalize } from "normalizr";
 import { user } from "@validation/normalizr";
-import { setAuthBag } from "./actions";
+import { setAuthBag, setTokens, setUser } from "./actions";
+import { createAsyncThunkWrapped } from "@utils/thunkWrapper";
+import { usersGetSelfUserThunk } from "@redux/users";
 
 export const loginThunk = createAsyncThunk(
   "auth/login",
@@ -31,7 +33,27 @@ export const loginThunk = createAsyncThunk(
       store.dispatch(setAuthBag(authBag));
       return normalize(data.data, user);
     } catch (e) {
+      console.error(e);
       return store.rejectWithValue(e.response.data || e.message);
     }
+  }
+);
+
+export const resendConfirmationMailThunk = createAsyncThunkWrapped(
+  "auth/resendConfirmationMail",
+  async ({ email }) => {
+    await resendConfirmationMailApi(email);
+    return {};
+  }
+);
+
+export const propagateTokenThunk = createAsyncThunkWrapped(
+  "auth/propagateToken",
+  async ({ client, expiry, accessToken, uid }, { dispatch }) => {
+    dispatch(setTokens({ client, expiry, accessToken, uid }));
+    const bag = await dispatch(usersGetSelfUserThunk());
+    const id = bag.payload.result;
+    dispatch(setUser({ id }));
+    return {};
   }
 );

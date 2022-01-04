@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { unwrapResult } from "@reduxjs/toolkit";
 import { useSnackbar } from "notistack";
 import { useParams } from "react-router-dom";
@@ -74,8 +74,10 @@ export const useParamSelector = (selector, params) => {
 };
 
 export const useQueryParams = () => {
-  return Object.fromEntries(
-    new URLSearchParams(useLocation().search).entries()
+  const { search } = useLocation();
+  return useMemo(
+    () => Object.fromEntries(new URLSearchParams(search).entries()),
+    [search]
   );
 };
 

@@ -5,7 +5,7 @@ import {
   localStorageSet,
   localStorageLoad,
 } from "@utils/tokens";
-import { setTokens, setAuthBag } from "./actions";
+import { setTokens, setAuthBag, setUser } from "./actions";
 
 const initialState = {
   token: {
@@ -30,7 +30,9 @@ const setTokensHelper = (state, { accessToken, client, uid, expiry }) => {
 };
 
 const setUserHelper = (state, { id }) => {
-  state.user.id = id;
+  state.user = {
+    id,
+  };
   localStorageSet({ ...state });
 };
 
@@ -43,9 +45,6 @@ export const auth = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    setUser(state, { payload }) {
-      setUserHelper(state, payload);
-    },
     loadAuthBag(state) {
       setAuthBagHelper(state, localStorageLoad());
     },
@@ -61,11 +60,13 @@ export const auth = createSlice({
     builder.addCase(setAuthBag, (state, { payload }) =>
       setAuthBagHelper(state, payload)
     );
+    builder.addCase(setUser, (state, { payload }) =>
+      setUserHelper(state, payload)
+    );
   },
 });
 
 const actions = auth.actions;
-export const setUser = actions.setUser;
 export const loadAuthBag = actions.loadAuthBag;
 export const logout = actions.logout;
 

@@ -1,4 +1,3 @@
-import { setTokens } from "@redux/auth/actions";
 import { load, save, remove } from "./localStorage";
 
 const tokenValueKey = "token.value";

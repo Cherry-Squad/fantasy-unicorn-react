@@ -1,5 +1,5 @@
-import SignUpWidget from './SignUpWidget';
+import SignUpWidget from "./SignUpWidget";
 
-import { makePage } from '@components/ImageWidgetPage';
+import { makePage } from "@components/ImageWidgetPage";
 
-export default makePage(SignUpWidget);
+export default makePage(SignUpWidget, "Регистрация");

@@ -29,10 +29,12 @@ export default function SignUpWidget() {
   const dispatch = useDispatch();
   const { enqueueError } = useMySnackbar();
   const [redirect, setRedirect] = useState(false);
+  const [redirectEmail, setRedirectEmail] = useState(null);
   const {
     handleSubmit,
     control,
     formState: { isSubmitting },
+    setError,
   } = useForm({
     resolver: yupResolver(registrationSchema),
     mode: "all",
@@ -48,17 +50,37 @@ export default function SignUpWidget() {
   const onSubmit = ({ username, email, password }) =>
     dispatch(usersCreateThunk({ username, email, password }))
       .then(unwrapResult)
-      .then(() => setRedirect(true))
+      .then(() => {
+        setRedirectEmail(email);
+        setRedirect(true);
+      })
       .catch((error) => {
-        if (error.message === "Email already exist") {
-          enqueueError(error.message);
-        } else {
-          enqueueError("Что-то пошло не так...");
+        console.error(error);
+        let errored = false;
+        if (error?.data) {
+          const errors = error?.data?.errors;
+          if (errors.email?.includes("has already been taken")) {
+            enqueueError("Email уже был занят!");
+            setError("email", {
+              type: "manual",
+              message: "Этот email недоступен",
+            });
+            errored = true;
+          }
+          if (errors?.username?.includes("has already been taken")) {
+            enqueueError("Username уже был занят!");
+            setError("username", {
+              type: "manual",
+              message: "Этот username недоступен",
+            });
+            errored = true;
+          }
         }
+        if (!errored) enqueueError("Что-то пошло не так...");
       });
 
   if (redirect) {
-    return <Navigate to="/user/validate" replace />;
+    return <Navigate to={`/email?email=${redirectEmail}`} replace />;
   } else {
     return (
       <Container component="main" maxWidth="xs">
