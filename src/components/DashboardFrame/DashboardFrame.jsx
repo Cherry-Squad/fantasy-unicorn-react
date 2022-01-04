@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useState, useCallback } from "react";
 import { styled, createTheme, ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import MuiDrawer from "@mui/material/Drawer";
@@ -16,9 +16,12 @@ import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import { mainListItems, secondaryListItems } from "./listItems";
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { Button } from "@mui/material";
+import LogoutIcon from "@mui/icons-material/Logout";
 
-function Copyright(props) {
+const Copyright = (props) => {
   return (
     <Typography
       variant="body2"
@@ -34,7 +37,21 @@ function Copyright(props) {
       {"."}
     </Typography>
   );
-}
+};
+
+const LogoutButton = () => {
+  const navigate = useNavigate();
+
+  const onClick = useCallback(() => {
+    navigate("/logout");
+  }, [navigate]);
+
+  return (
+    <IconButton aria-label="logout" color="inherit" onClick={onClick}>
+      <LogoutIcon />
+    </IconButton>
+  );
+};
 
 const drawerWidth = 240;
 
@@ -84,8 +101,8 @@ const Drawer = styled(MuiDrawer, {
 
 const mdTheme = createTheme();
 
-function DashboardContent({ children }) {
-  const [open, setOpen] = React.useState(true);
+const DashboardContent = ({ children }) => {
+  const [open, setOpen] = useState(true);
   const toggleDrawer = () => {
     setOpen(!open);
   };
@@ -121,11 +138,7 @@ function DashboardContent({ children }) {
             >
               Fantasy Unicorn
             </Typography>
-            <IconButton color="inherit">
-              <Badge badgeContent={4} color="secondary">
-                <NotificationsIcon />
-              </Badge>
-            </IconButton>
+            <LogoutButton />
           </Toolbar>
         </AppBar>
         <Drawer variant="permanent" open={open}>
@@ -167,12 +180,12 @@ function DashboardContent({ children }) {
       </Box>
     </ThemeProvider>
   );
-}
+};
 
-export default function Dashboard() {
-  return (
-    <DashboardContent>
-      <Outlet />
-    </DashboardContent>
-  );
-}
+const Dashboard = () => (
+  <DashboardContent>
+    <Outlet />
+  </DashboardContent>
+);
+
+export default Dashboard;
