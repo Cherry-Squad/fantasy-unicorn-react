@@ -10,18 +10,18 @@ const defaultBodyHeaders = {
   "Content-Type": "application/json",
 };
 
-const okOnly = (status) => status === 200;
+const okAndCreatedOnly = (status) => [200, 201].includes(status);
 
 export const basicAxios = () =>
   axios.create({
     baseURL: ip,
     headers: defaultBodyHeaders,
-    validateStatus: okOnly,
+    validateStatus: okAndCreatedOnly,
   });
 
 export const mainAxios = axios.create({
   baseURL: ip,
   headers: defaultBodyHeaders,
-  validateStatus: okOnly,
+  validateStatus: okAndCreatedOnly,
   paramsSerializer: (params) => Qs.stringify(params, { arrayFormat: "repeat" }),
 });

@@ -1,11 +1,9 @@
 import { DirectionStrategyEnum, StatusEnum } from "@dict/contest";
+import { delay } from "@utils/fake";
 import { addDaysToDate, minusHoursToDate, addHoursToDate } from "../utils/date";
 import { mainAxios } from "./utils";
 
 // export const getAllContestsApi = () => mainAxios.get("/contest");
-function delay(time) {
-  return new Promise((resolve) => setTimeout(resolve, time));
-}
 
 const fakeContests = {
   1: {
