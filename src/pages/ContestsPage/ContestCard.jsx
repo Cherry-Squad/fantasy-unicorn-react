@@ -23,13 +23,14 @@ const ContestCard = ({ contest }) => {
       elevation={2}
       sx={{
         width: "240px",
+        minWidth: "240px",
         height: "180px",
         p: 3,
         mr: 3,
       }}
     >
       <Grid container>
-        <Grid item sm={12} sx={{ display: "flex", alignItems: "center" }}>
+        <Grid item xs={12} sx={{ display: "flex", alignItems: "center" }}>
           <Link
             component={RenderLink}
             to={`/contest/${id}`}
@@ -50,23 +51,23 @@ const ContestCard = ({ contest }) => {
           )}
           <ContestStatusIcon status={status} />
         </Grid>
-        <Grid item sm={12} sx={{ mt: 1.5, mb: 1.5 }}>
+        <Grid item xs={12} sx={{ mt: 1.5, mb: 1.5 }}>
           <Divider />
         </Grid>
         <Grid
           item
-          sm={12}
+          xs={12}
           sx={{ display: "flex", justifyContent: "space-around" }}
         >
           <ContestModsIconBar showAll={false} contest={contest} />
         </Grid>
-        <Grid item sm={12} sx={{ mt: 1.5, mb: 1.5 }}>
+        <Grid item xs={12} sx={{ mt: 1.5, mb: 1.5 }}>
           <Divider />
         </Grid>
-        <Grid item sm={6}>
+        <Grid item xs={6}>
           <CoinsEntryFeeBadge value={coinsEntryFee} />
         </Grid>
-        <Grid item sm={6}>
+        <Grid item xs={6}>
           <FantasyPointsThresholdBadge value={maxFantasyPointsThreshold} />
         </Grid>
       </Grid>

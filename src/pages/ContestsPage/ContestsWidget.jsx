@@ -41,6 +41,7 @@ const ContestsWidget = () => {
           alignItems: "flex-start",
           alignContent: "flex-start",
           p: 3,
+          rowGap: 3,
         }}
       >
         {cards}
