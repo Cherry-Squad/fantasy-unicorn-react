@@ -1,13 +1,15 @@
 import { Grid, Paper } from "@mui/material";
-import ContestMenu from "@pages/ContestMenu";
+import { useDocumentTitle } from "@utils/hooks";
 import React from "react";
+import ContestsWidget from "@pages/ContestsPage/ContestsWidget";
 
 const MainPage = () => {
+  useDocumentTitle("Главная");
   return (
     <Grid container spacing={3}>
       <Grid item xs={12}>
         <Paper>
-          <ContestMenu />
+          <ContestsWidget />
         </Paper>
       </Grid>
     </Grid>

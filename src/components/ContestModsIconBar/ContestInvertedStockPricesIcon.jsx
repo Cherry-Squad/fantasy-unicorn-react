@@ -3,15 +3,16 @@ import FlipCameraAndroidIcon from "@mui/icons-material/FlipCameraAndroid";
 import ShowChartIcon from "@mui/icons-material/ShowChart";
 import { Tooltip } from "@mui/material";
 import { amber } from "@mui/material/colors";
+import { InvertedStockPricesRu } from "@dict/contest";
 
 const ContestInvertedStockPricesIcon = ({ useInvertedStockPrices }) => {
-  return useInvertedStockPrices ? (
-    <Tooltip title="Инвертированные стоимости">
-      <FlipCameraAndroidIcon sx={{ color: amber[500] }} />
-    </Tooltip>
-  ) : (
-    <Tooltip title="Обычные стоимости">
-      <ShowChartIcon color="primary" />
+  return (
+    <Tooltip title={InvertedStockPricesRu[useInvertedStockPrices]}>
+      {useInvertedStockPrices ? (
+        <FlipCameraAndroidIcon sx={{ color: amber[500] }} />
+      ) : (
+        <ShowChartIcon color="primary" />
+      )}
     </Tooltip>
   );
 };

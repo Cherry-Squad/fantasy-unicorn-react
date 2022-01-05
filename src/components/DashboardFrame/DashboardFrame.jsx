@@ -21,6 +21,7 @@ import PointsBadge from "@components/PointsBadge";
 import CoinsBadge from "@components/CoinsBadge";
 import { useSelector } from "react-redux";
 import { userIdSelector } from "@redux/auth";
+import PathBreadcrumb from "./PathBreadcrumb";
 
 const Copyright = (props) => {
   return (
@@ -132,15 +133,7 @@ const DashboardContent = ({ children }) => {
             >
               <MenuIcon />
             </IconButton>
-            <Typography
-              component="h1"
-              variant="h6"
-              color="inherit"
-              noWrap
-              sx={{ flexGrow: 1 }}
-            >
-              Fantasy Unicorn
-            </Typography>
+            <PathBreadcrumb largeScreen={largeScreen} sx={{ flexGrow: 1 }} />
             {largeScreen && (
               <>
                 <PointsBadge userId={userId} />
@@ -193,7 +186,9 @@ const DashboardContent = ({ children }) => {
 
 const Dashboard = () => (
   <DashboardContent>
-    <Outlet />
+    <main>
+      <Outlet />
+    </main>
   </DashboardContent>
 );
 

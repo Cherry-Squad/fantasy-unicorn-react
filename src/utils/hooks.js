@@ -137,6 +137,7 @@ export const useLoading = (
   }, [execute, immediate]);
 
   const loading = status === UseLoadingEnum.PENDING;
+  const idle = status === UseLoadingEnum.IDLE;
 
   return {
     execute,
@@ -144,6 +145,7 @@ export const useLoading = (
     value,
     error,
     loading,
+    idle,
     bundle: { loading, error, status },
   };
 };

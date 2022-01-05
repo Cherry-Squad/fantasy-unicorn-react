@@ -1,4 +1,5 @@
 import { createSlice, createEntityAdapter, isAnyOf } from "@reduxjs/toolkit";
+import { getContestByIdThunk } from ".";
 import { getAllContestsThunk } from "./thunks";
 
 export const contestAdapter = createEntityAdapter();
@@ -15,6 +16,15 @@ export const contests = createSlice({
         contestAdapter.upsertMany(
           state,
           Object.values(payload.entities.contests)
+        );
+      }
+    );
+    builder.addMatcher(
+      isAnyOf(getContestByIdThunk.fulfilled),
+      (state, { payload }) => {
+        contestAdapter.upsertOne(
+          state,
+          payload.entities.contests[payload.result]
         );
       }
     );

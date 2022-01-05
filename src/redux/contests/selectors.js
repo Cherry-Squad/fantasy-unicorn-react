@@ -15,6 +15,6 @@ export const getContestsByIdsSelector = createSelector(
 
 export const getContestByIdSelector = createSelector(
   contestsSelector,
-  (_, { userId }) => userId,
-  ({ entities }, uid) => entities[uid]
+  (_, { id }) => id,
+  ({ entities }, id) => entities[id]
 );

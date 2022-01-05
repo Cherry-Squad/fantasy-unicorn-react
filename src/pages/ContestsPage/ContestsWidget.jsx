@@ -7,13 +7,13 @@ import { useSelector } from "react-redux";
 import ContestCard from "./ContestCard";
 import RefreshIcon from "@mui/icons-material/Refresh";
 
-const ContestMenu = () => {
+const ContestsWidget = () => {
   const { loading, execute } = useLoading(getAllContestsThunk, {
     enqueue: true,
   });
 
   const contests = useSelector(getAllContestsSelector);
-  console.log(contests);
+
   const cards = useMemo(
     () => contests.map((c) => <ContestCard key={c.id} contest={c} />),
     [contests]
@@ -49,4 +49,4 @@ const ContestMenu = () => {
   );
 };
 
-export default ContestMenu;
+export default ContestsWidget;
