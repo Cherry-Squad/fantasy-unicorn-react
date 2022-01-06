@@ -16,7 +16,7 @@ export const deleteBriefcaseApi = (id) =>
   delay(500).then(() => {
     deleteFakeBriefcase();
     return {
-      status: 200,
+      status: 204,
       data: null,
     };
   });
@@ -25,9 +25,9 @@ export const createBriefcaseApi = (userId) =>
   delay(500).then(() => {
     const data = setFakeBriefcase({
       id: 1,
-      expiring_at: new Date(),
+      expiring_at: addDaysToDate(new Date(), 7),
       user_id: userId,
-      created_at: addDaysToDate(new Date(), 7),
+      created_at: new Date(),
       updated_at: new Date(),
       _linkedStocks: [],
     });
@@ -50,4 +50,20 @@ export const updateBriefcaseApi = (id, { stock_id, add }) =>
       status: 200,
       data,
     };
+  });
+
+export const getBriefcaseStocksByIdApi = (id) =>
+  delay(500).then(() => {
+    const data = getFakeBriefcase()?._linkedStocks;
+    if (!!data) {
+      return {
+        status: 200,
+        data,
+      };
+    } else {
+      return {
+        status: 404,
+        data: null,
+      };
+    }
   });

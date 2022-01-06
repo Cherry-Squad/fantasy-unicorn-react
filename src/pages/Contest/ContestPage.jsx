@@ -14,7 +14,9 @@ const ContestPage = () => {
 
   const actionCreator = useCallback(() => getContestByIdThunk({ id }), [id]);
 
-  const { loading, error, idle } = useLoading(actionCreator, { enqueue: true });
+  const { loading, error, idle } = useLoading(actionCreator, {
+    enqueue: true,
+  });
   const contest = useParamSelector(getContestByIdSelector, { id });
 
   return (

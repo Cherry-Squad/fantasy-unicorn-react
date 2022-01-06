@@ -4,24 +4,46 @@ import {
   createBriefcaseApi,
   deleteBriefcaseApi,
   getBriefcasesOfSelfUserApi,
+  getBriefcaseStocksByIdApi,
   updateBriefcaseApi,
 } from "@api/briefcase";
-import { briefcase } from "@validation/normalizr";
+import { briefcase, stock } from "@validation/normalizr";
 import { unwrapResult } from "@reduxjs/toolkit";
+
+export const getStocksOfBriefcaseThunk = createAsyncThunkWrapped(
+  "briefcases/getStocksOfBriefcase",
+  async ({ briefcaseId }) => {
+    const response = await getBriefcaseStocksByIdApi(briefcaseId);
+    return normalize(response.data || [], [stock]);
+  }
+);
 
 export const getBriefcaseOfSelfUserThunk = createAsyncThunkWrapped(
   "briefcases/getBriefcaseOfSelfUser",
   async () => {
     const response = await getBriefcasesOfSelfUserApi();
-    return normalize(response.data[0], briefcase);
+    return normalize(response.data?.[0] || {}, briefcase);
   }
 );
 
 export const createBriefcaseThunk = createAsyncThunkWrapped(
   "briefcases/createBriefcase",
-  async (_, { state }) => {
-    const response = await createBriefcaseApi(state.auth.user.id);
+  async (_, { getState }) => {
+    const response = await createBriefcaseApi(getState().auth.user.id);
     return normalize(response.data, briefcase);
+  }
+);
+
+export const getOrCreateBriefcaseOfSelfUserThunk = createAsyncThunkWrapped(
+  "briefcases/getOrCreateBriefcaseOfSelfUser",
+  async (_, { dispatch }) => {
+    const normalized = await dispatch(getBriefcaseOfSelfUserThunk()).then(
+      unwrapResult
+    );
+    if (!!normalized.result) {
+      return normalized;
+    }
+    return await dispatch(createBriefcaseThunk()).then(unwrapResult);
   }
 );
 

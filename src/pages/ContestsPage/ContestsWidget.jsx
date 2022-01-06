@@ -14,6 +14,7 @@ const ContestsWidget = () => {
 
   const contests = useSelector(getAllContestsSelector);
 
+  // uwc-debug
   const cards = useMemo(
     () => contests.map((c) => <ContestCard key={c.id} contest={c} />),
     [contests]

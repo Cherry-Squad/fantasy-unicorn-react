@@ -1,9 +1,9 @@
 import { createSlice, createEntityAdapter, isAnyOf } from "@reduxjs/toolkit";
+import { getBriefcaseOfSelfUserThunk, getStocksOfBriefcaseThunk } from ".";
 import {
   addStockToBriefcaseThunk,
   createBriefcaseThunk,
   deleteBriefcaseThunk,
-  getBriefcaseOfSelfUserThunk,
   removeStockFromBriefcaseThunk,
 } from "./thunks";
 
@@ -17,18 +17,39 @@ export const briefcases = createSlice({
     builder.addCase(deleteBriefcaseThunk.fulfilled, (state, { payload }) => {
       briefcaseAdapter.removeOne(state, payload.id);
     });
+    builder.addCase(
+      getStocksOfBriefcaseThunk.fulfilled,
+      (state, { payload, meta }) => {
+        const briefcase = state.entities[meta.arg.briefcaseId];
+        briefcaseAdapter.updateOne(state, {
+          ...briefcase,
+          stocks: payload.entities.stocks
+            ? payload.entities?.stocks.map(({ id }) => id)
+            : [],
+        });
+      }
+    );
+    // builder.addMatcher(
+    //   isAnyOf(getBriefcasesOfSelfUserThunk.fulfilled),
+    //   (state, { payload }) => {
+    //     briefcaseAdapter.upsertMany(state, payload.entities.briefcases);
+    //   }
+    // );
     builder.addMatcher(
       isAnyOf(
-        getBriefcaseOfSelfUserThunk.fulfilled,
         createBriefcaseThunk.fulfilled,
         addStockToBriefcaseThunk.fulfilled,
-        removeStockFromBriefcaseThunk.fulfilled
+        removeStockFromBriefcaseThunk.fulfilled,
+        getBriefcaseOfSelfUserThunk.fulfilled
       ),
       (state, { payload }) => {
-        briefcaseAdapter.upsertOne(
-          state,
-          payload.entities.contests[payload.result]
-        );
+        const data = payload.entities.briefcases?.[payload.result];
+        if (data) {
+          briefcaseAdapter.upsertOne(
+            state,
+            payload.entities.briefcases?.[payload.result]
+          );
+        }
       }
     );
   },

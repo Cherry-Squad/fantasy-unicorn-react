@@ -9,7 +9,7 @@
       "type": "firefox",
       "request": "launch",
       "reAttach": true,
-      "url": "http://localhost:9000/index.html",
+      "url": "http://localhost:9000",
       "webRoot": "${workspaceFolder}",
       "enableCRAWorkaround": true,
       "profile": "dev-profile"

@@ -31,7 +31,7 @@ const setTokensHelper = (state, { accessToken, client, uid, expiry }) => {
 
 const setUserHelper = (state, { id }) => {
   state.user = {
-    id,
+    id: +id,
   };
   localStorageSet({ ...state });
 };

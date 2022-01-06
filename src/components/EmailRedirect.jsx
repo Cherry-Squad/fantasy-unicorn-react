@@ -1,5 +1,5 @@
 import { propagateTokenThunk } from "@redux/auth";
-import { useLoading, UseLoadingEnum, useQueryParams } from "@utils/hooks";
+import { UseLoadingEnum, useLoading, useQueryParams } from "@utils/hooks";
 import React, { useCallback, useMemo } from "react";
 import { Navigate } from "react-router-dom";
 import BigProcess from "./BigProcess";

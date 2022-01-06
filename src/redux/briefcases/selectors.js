@@ -12,5 +12,5 @@ export const getBriefcaseByUserIdSelector = createSelector(
   briefcasesSelector,
   (_, { userId }) => userId,
   ({ entities }, userId) =>
-    Object.values(entities).find((v) => v.user_id === userId)
+    Object.values(entities).find((v) => +v.user_id === +userId)
 );

@@ -51,6 +51,9 @@
     ]
   },
   "devDependencies": {
+    "@simbathesailor/babel-plugin-use-what-changed": "^2.1.0",
+    "@simbathesailor/use-what-changed": "^2.0.0",
+    "customize-cra": "^1.0.0",
     "react-app-rewired": "^2.1.10"
   }
 }

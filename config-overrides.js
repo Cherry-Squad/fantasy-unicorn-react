@@ -1,3 +1,4 @@
+const { override, addExternalBabelPlugin } = require("customize-cra");
 const { alias, aliasJest } = require("react-app-rewire-alias"); // DO NOT CONVERT TO ES6 MODULE STYLE!
 
 const aliasMap = {
@@ -13,5 +14,13 @@ const aliasMap = {
   "@views": "src/views",
 };
 
-module.exports = alias(aliasMap);
 module.exports.jest = aliasJest(aliasMap);
+module.exports = override(
+  alias(aliasMap),
+  addExternalBabelPlugin([
+    "@simbathesailor/babel-plugin-use-what-changed",
+    {
+      active: process.env.NODE_ENV === "development", // boolean
+    },
+  ])
+);
