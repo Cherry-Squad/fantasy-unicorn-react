@@ -65,7 +65,7 @@ export const refreshBriefcaseThunk = createAsyncThunkWrapped(
       ? getResult.entities.briefcases[getResult.result].id
       : null;
     if (briefcaseId) {
-      await dispatch(deleteBriefcaseApi({ id: briefcaseId })).then(
+      await dispatch(deleteBriefcaseThunk({ id: briefcaseId })).then(
         unwrapResult
       );
     }

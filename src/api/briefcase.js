@@ -23,14 +23,15 @@ export const deleteBriefcaseApi = (id) =>
 
 export const createBriefcaseApi = (userId) =>
   delay(500).then(() => {
-    const data = setFakeBriefcase({
+    const data = {
       id: 1,
       expiring_at: addDaysToDate(new Date(), 7),
       user_id: userId,
       created_at: new Date(),
       updated_at: new Date(),
       _linkedStocks: [],
-    });
+    };
+    setFakeBriefcase(data);
     return {
       status: 200,
       data,

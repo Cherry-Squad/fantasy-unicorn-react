@@ -18,7 +18,7 @@ const StocksList = ({ size, content, onAdd, ...props }) => {
     () =>
       Array(size - content.length)
         .fill()
-        .map((i) => (
+        .map((_, i) => (
           <React.Fragment key={i}>
             <ListItem key={i} disablePadding>
               <ListItemText primary={"Слот для акции"} />
@@ -28,7 +28,6 @@ const StocksList = ({ size, content, onAdd, ...props }) => {
         )),
     [size, content.length]
   );
-  console.log(dummyContent);
   return (
     <List {...props}>
       {mappedContent}

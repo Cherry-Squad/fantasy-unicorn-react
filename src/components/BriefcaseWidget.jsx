@@ -1,4 +1,11 @@
-import { CircularProgress, Divider, IconButton, Tooltip } from "@mui/material";
+import {
+  CircularProgress,
+  Divider,
+  IconButton,
+  LinearProgress,
+  Tooltip,
+  Typography,
+} from "@mui/material";
 import { Box } from "@mui/system";
 import { userIdSelector } from "@redux/auth";
 import {
@@ -32,7 +39,7 @@ const RefreshButton = ({ briefcase }) => {
   });
   return (
     <IconButton disabled={!expired || loading} onClick={execute}>
-      {loading ? <CircularProgress /> : <RefreshIcon />}
+      {loading ? <CircularProgress size="24px" /> : <RefreshIcon />}
     </IconButton>
   );
 };
@@ -65,19 +72,28 @@ const BriefcaseWidget = ({ briefcaseSize = 10 }) => {
 
   console.log(briefcaseLoading.status, stocksLoading.status, userId, id);
 
-  if (briefcaseLoading.loading || stocksLoading.loading) {
-    return <BigProcess />;
-  }
+  const loading = briefcaseLoading.loading || stocksLoading.loading;
+
   return (
     <Box>
       <Box sx={{ display: "flex", p: 1, pr: 2, alignItems: "center" }}>
         <Box sx={{ flexGrow: 1 }}>
           <RefreshButton briefcase={briefcase} sx={{ flexGrow: 1 }} />
         </Box>
-        <VisibleTimer targetDate={new Date(expiringAt)} />
+        {loading ? (
+          <Typography color="text.secondary">00:00</Typography>
+        ) : (
+          <VisibleTimer
+            targetDate={new Date(expiringAt)}
+            color="text.secondary"
+          />
+        )}
       </Box>
+      {loading && <LinearProgress />}
       <Divider sx={{ mt: 1, mb: 1 }} />
-      <StocksList size={briefcaseSize} content={stocks} sx={{ p: 2 }} />
+      {!loading && (
+        <StocksList size={briefcaseSize} content={stocks} sx={{ p: 2 }} />
+      )}
     </Box>
   );
 };
