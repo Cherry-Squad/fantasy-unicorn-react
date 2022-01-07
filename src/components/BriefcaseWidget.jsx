@@ -3,27 +3,67 @@ import {
   Divider,
   IconButton,
   LinearProgress,
-  Tooltip,
   Typography,
 } from "@mui/material";
 import { Box } from "@mui/system";
 import { userIdSelector } from "@redux/auth";
 import {
+  addStockToBriefcaseThunk,
   getBriefcaseByUserIdSelector,
-  getBriefcaseOfSelfUserThunk,
   getOrCreateBriefcaseOfSelfUserThunk,
   getStocksOfBriefcaseThunk,
   refreshBriefcaseThunk,
 } from "@redux/briefcases";
 import { getStocksByIdsSelector } from "@redux/stocks";
-import { useLoading, useParamSelector } from "@utils/hooks";
-import React, { useCallback, useEffect } from "react";
+import { useLoading, useMySnackbar, useParamSelector } from "@utils/hooks";
+import React, { useCallback, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import BigProcess from "./BigProcess";
 import StocksList from "./StocksList";
 import RefreshIcon from "@mui/icons-material/Refresh";
-import { secondsToDhms } from "@utils/date";
 import VisibleTimer from "./VisibleTimer";
+import { AddStockModal } from "./AddStock";
+import AddIcon from "@mui/icons-material/Add";
+
+const AddButton = ({ briefcase, stocks }) => {
+  const [loading, setLoading] = useState(false);
+  const [openModal, setOpenModal] = useState(false);
+  const { enqueueError } = useMySnackbar();
+  const dispatch = useDispatch();
+
+  const { id: briefcaseId, expiring_at: expiringAt } = briefcase;
+  const delta = new Date(expiringAt) - new Date();
+  const expired = !!expiringAt && delta <= 0;
+  const canAdd = !expired && stocks.length < 10;
+
+  const onClick = useCallback(() => setOpenModal(true), [setOpenModal]);
+
+  const onAdd = useCallback(
+    ({ id }) => {
+      setLoading(true);
+      dispatch(addStockToBriefcaseThunk({ stockId: id, briefcaseId }))
+        .then(() => setOpenModal(false))
+        .catch((e) => {
+          console.error(e);
+          enqueueError(e);
+        })
+        .finally(() => setLoading(false));
+    },
+    [dispatch, setOpenModal, briefcaseId, enqueueError]
+  );
+
+  return (
+    <>
+      <IconButton disabled={!canAdd} onClick={onClick}>
+        {loading ? <CircularProgress size="24px" /> : <AddIcon />}
+      </IconButton>
+      <AddStockModal
+        openModal={openModal}
+        setOpenModal={setOpenModal}
+        onAdd={onAdd}
+      />
+    </>
+  );
+};
 
 const RefreshButton = ({ briefcase }) => {
   const { user_id: userId, expiring_at: expiringAt } = briefcase;
@@ -78,7 +118,8 @@ const BriefcaseWidget = ({ briefcaseSize = 10 }) => {
     <Box>
       <Box sx={{ display: "flex", p: 1, pr: 2, alignItems: "center" }}>
         <Box sx={{ flexGrow: 1 }}>
-          <RefreshButton briefcase={briefcase} sx={{ flexGrow: 1 }} />
+          <RefreshButton briefcase={briefcase} />
+          <AddButton briefcase={briefcase} stocks={stocks} />
         </Box>
         {loading ? (
           <Typography color="text.secondary">00:00</Typography>

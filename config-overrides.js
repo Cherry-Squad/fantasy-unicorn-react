@@ -12,6 +12,7 @@ const aliasMap = {
   "@dict": "src/dict",
   "@pages": "src/pages",
   "@views": "src/views",
+  "@vendor": "src/vendor",
 };
 
 module.exports.jest = aliasJest(aliasMap);

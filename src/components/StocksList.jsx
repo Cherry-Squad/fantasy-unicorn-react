@@ -1,8 +1,7 @@
 import { Divider, List, ListItem, ListItemText } from "@mui/material";
-import { contest } from "@validation/normalizr";
 import React, { useMemo } from "react";
 
-const StocksList = ({ size, content, onAdd, ...props }) => {
+const StocksList = ({ size, content, ...props }) => {
   const mappedContent = useMemo(
     () =>
       content.map(({ name }) => (

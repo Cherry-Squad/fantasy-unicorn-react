@@ -1,6 +1,7 @@
 import { addDaysToDate } from "@utils/date";
 import { delay } from "@utils/fake";
 import { remove, load, save } from "@utils/localStorage";
+import { getFakeStocks } from "./stock";
 
 const getFakeBriefcase = () => JSON.parse(load("fake-briefcase"));
 const deleteFakeBriefcase = () => remove("fake-briefcase");
@@ -25,10 +26,10 @@ export const createBriefcaseApi = (userId) =>
   delay(500).then(() => {
     const data = {
       id: 1,
-      expiring_at: addDaysToDate(new Date(), 7),
+      expiring_at: addDaysToDate(new Date(), 7).toISOString(),
       user_id: userId,
-      created_at: new Date(),
-      updated_at: new Date(),
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
       _linkedStocks: [],
     };
     setFakeBriefcase(data);
@@ -41,21 +42,26 @@ export const createBriefcaseApi = (userId) =>
 export const updateBriefcaseApi = (id, { stock_id, add }) =>
   delay(500).then(() => {
     const prevState = getFakeBriefcase();
-    const linked = [...prevState].filter((v) => v !== stock_id);
+    const linked = [...prevState._linkedStocks].filter((v) => v !== stock_id);
     if (add) linked.push(stock_id);
-    const data = setFakeBriefcase({
-      ...getFakeBriefcase(),
+    const newState = {
+      ...prevState,
       _linkedStocks: linked,
-    });
+    };
+    setFakeBriefcase(newState);
     return {
       status: 200,
-      data,
+      data: newState,
     };
   });
 
 export const getBriefcaseStocksByIdApi = (id) =>
   delay(500).then(() => {
-    const data = getFakeBriefcase()?._linkedStocks;
+    const stocks = getFakeStocks();
+    const data = stocks.filter((s) =>
+      getFakeBriefcase()?._linkedStocks.includes(s.id)
+    );
+    console.log(data);
     if (!!data) {
       return {
         status: 200,

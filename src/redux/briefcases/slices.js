@@ -21,24 +21,29 @@ export const briefcases = createSlice({
       getStocksOfBriefcaseThunk.fulfilled,
       (state, { payload, meta }) => {
         const briefcase = state.entities[meta.arg.briefcaseId];
-        briefcaseAdapter.updateOne(state, {
+        console.log(payload, meta, JSON.stringify(briefcase));
+        briefcaseAdapter.upsertOne(state, {
           ...briefcase,
           stocks: payload.entities.stocks
-            ? payload.entities?.stocks.map(({ id }) => id)
+            ? Object.values(payload.entities?.stocks).map(({ id }) => id)
             : [],
         });
       }
     );
-    // builder.addMatcher(
-    //   isAnyOf(getBriefcasesOfSelfUserThunk.fulfilled),
-    //   (state, { payload }) => {
-    //     briefcaseAdapter.upsertMany(state, payload.entities.briefcases);
-    //   }
-    // );
+    builder.addCase(
+      addStockToBriefcaseThunk.fulfilled,
+      (state, { payload, meta }) => {
+        const data = payload.entities.briefcases[payload.result];
+        const fromState = state.entities[payload.result];
+        briefcaseAdapter.upsertOne(state, {
+          ...data,
+          stocks: [...(fromState.stocks || []), meta.arg.stockId],
+        });
+      }
+    );
     builder.addMatcher(
       isAnyOf(
         createBriefcaseThunk.fulfilled,
-        addStockToBriefcaseThunk.fulfilled,
         removeStockFromBriefcaseThunk.fulfilled,
         getBriefcaseOfSelfUserThunk.fulfilled
       ),

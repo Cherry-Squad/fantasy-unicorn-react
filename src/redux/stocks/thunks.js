@@ -35,7 +35,7 @@ export const getOrCreateStockThunk = createAsyncThunkWrapped(
     if (getData) {
       return normalize(getData, stock);
     }
-    const { payload } = await dispatch(createStockThunk({ name })).then(
+    const payload = await dispatch(createStockThunk({ name })).then(
       unwrapResult
     );
     return payload; // already normalized

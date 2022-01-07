@@ -186,9 +186,7 @@ const DashboardContent = ({ children }) => {
 
 const Dashboard = () => (
   <DashboardContent>
-    <main>
-      <Outlet />
-    </main>
+    <Outlet />
   </DashboardContent>
 );
 

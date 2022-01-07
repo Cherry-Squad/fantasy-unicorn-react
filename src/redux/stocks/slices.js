@@ -22,10 +22,12 @@ export const stocks = createSlice({
         getOrCreateStockThunk.fulfilled
       ),
       (state, { payload }) => {
-        stockAdapter.upsertOne(
-          state,
-          payload.entities.contests[payload.result]
-        );
+        if (payload.entities?.stocks?.[payload.result]) {
+          stockAdapter.upsertOne(
+            state,
+            payload.entities.stocks[payload.result]
+          );
+        }
       }
     );
     builder.addMatcher(
