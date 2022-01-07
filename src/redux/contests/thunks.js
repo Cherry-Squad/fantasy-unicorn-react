@@ -7,7 +7,7 @@ export const getAllContestsThunk = createAsyncThunkWrapped(
   "contests/getAllContests",
   async () => {
     const response = await getAllContestsApi();
-    return normalize(response.data, [contest]);
+    return normalize(response.data || [], [contest]);
   }
 );
 
@@ -15,6 +15,6 @@ export const getContestByIdThunk = createAsyncThunkWrapped(
   "contests/getContestById",
   async ({ id }) => {
     const response = await getContestByIdApi(id);
-    return normalize(response.data, contest);
+    return response.data && normalize(response.data, contest);
   }
 );

@@ -178,6 +178,6 @@ export const useNumberParams = () => {
 
 export const useDocumentTitle = (title) => {
   useEffect(() => {
-    document.title = (title ? `${title} | ` : "") + "Fantasy Unicorn";
+    document.title = (title ? `${title} - ` : "") + "Fantasy Unicorn";
   }, [title]);
 };

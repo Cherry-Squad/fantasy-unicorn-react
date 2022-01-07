@@ -16,13 +16,14 @@ import {
 } from "@redux/briefcases";
 import { getStocksByIdsSelector } from "@redux/stocks";
 import { useLoading, useMySnackbar, useParamSelector } from "@utils/hooks";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import StocksList from "./StocksList";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import VisibleTimer from "./VisibleTimer";
 import { AddStockModal } from "./AddStock";
 import AddIcon from "@mui/icons-material/Add";
+import { unwrapResult } from "@reduxjs/toolkit";
 
 const AddButton = ({ briefcase, stocks }) => {
   const [loading, setLoading] = useState(false);
@@ -85,34 +86,68 @@ const RefreshButton = ({ briefcase }) => {
 };
 
 const BriefcaseWidget = ({ briefcaseSize = 10 }) => {
-  const briefcaseLoading = useLoading(getOrCreateBriefcaseOfSelfUserThunk, {
-    enqueue: true,
-  });
+  // const briefcaseLoading = useLoading(getOrCreateBriefcaseOfSelfUserThunk, {
+  //   enqueue: true,
+  // });
 
+  // const userId = useSelector(userIdSelector);
+
+  // const briefcase =
+  //   useParamSelector(getBriefcaseByUserIdSelector, {
+  //     userId,
+  //   }) || {};
+
+  // const { id, expiring_at: expiringAt, stocks: stocksIds } = briefcase;
+
+  // const stocksAction = useCallback(
+  //   () => getStocksOfBriefcaseThunk({ briefcaseId: id }),
+  //   [id]
+  // );
+
+  // const stocksLoading = useLoading(stocksAction, {
+  //   enqueue: true,
+  // });
+
+  // const stocks =
+  //   useParamSelector(getStocksByIdsSelector, { ids: stocksIds || [] }) || [];
+
+  // console.log(briefcaseLoading.status, stocksLoading.status, userId, id);
+
+  // const loading = briefcaseLoading.loading || stocksLoading.loading;
   const userId = useSelector(userIdSelector);
-
+  const dispatch = useDispatch();
+  const { enqueueError } = useMySnackbar();
+  const [loading, setLoading] = useState(false);
+  const [executedOnce, setExecutedOnce] = useState(null);
   const briefcase =
-    useParamSelector(getBriefcaseByUserIdSelector, {
-      userId,
-    }) || {};
-
+    useParamSelector(getBriefcaseByUserIdSelector, { userId }) || {};
   const { id, expiring_at: expiringAt, stocks: stocksIds } = briefcase;
-
-  const stocksAction = useCallback(
-    () => getStocksOfBriefcaseThunk({ briefcaseId: id }),
-    [id]
-  );
-
-  const stocksLoading = useLoading(stocksAction, {
-    enqueue: true,
-  });
-
   const stocks =
     useParamSelector(getStocksByIdsSelector, { ids: stocksIds || [] }) || [];
 
-  console.log(briefcaseLoading.status, stocksLoading.status, userId, id);
-
-  const loading = briefcaseLoading.loading || stocksLoading.loading;
+  useEffect(() => {
+    if (!loading && !executedOnce) {
+      setLoading(true);
+      setExecutedOnce(true);
+      dispatch(getOrCreateBriefcaseOfSelfUserThunk())
+        .then(unwrapResult)
+        .then(({ result }) =>
+          dispatch(getStocksOfBriefcaseThunk({ briefcaseId: result }))
+        )
+        .then(unwrapResult)
+        .catch((e) => {
+          enqueueError(e?.message || e);
+        })
+        .finally(() => setLoading(false));
+    }
+  }, [
+    loading,
+    executedOnce,
+    setLoading,
+    dispatch,
+    enqueueError,
+    setExecutedOnce,
+  ]);
 
   return (
     <Box>
@@ -132,7 +167,7 @@ const BriefcaseWidget = ({ briefcaseSize = 10 }) => {
       </Box>
       {loading && <LinearProgress />}
       <Divider sx={{ mt: 1, mb: 1 }} />
-      {!loading && (
+      {!loading && executedOnce && (
         <StocksList size={briefcaseSize} content={stocks} sx={{ p: 2 }} />
       )}
     </Box>

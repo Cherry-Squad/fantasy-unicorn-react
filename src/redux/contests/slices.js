@@ -15,16 +15,17 @@ export const contests = createSlice({
         contestAdapter.removeAll(state);
         contestAdapter.upsertMany(
           state,
-          Object.values(payload.entities.contests)
+          Object.values(payload.entities?.contests || {}) || []
         );
       }
     );
     builder.addMatcher(
       isAnyOf(getContestByIdThunk.fulfilled),
       (state, { payload }) => {
+        if (!payload) return;
         contestAdapter.upsertOne(
           state,
-          payload.entities.contests[payload.result]
+          payload.entities?.contests[payload.result]
         );
       }
     );
