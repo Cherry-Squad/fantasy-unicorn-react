@@ -28,6 +28,7 @@ export const entityAdapterWithExtract = (
     if (result === undefined) return false;
     return true;
   };
+
   const assertPayloadCorrect = (payload) => {
     if (!isPayloadCorrect(payload)) {
       console.error("Expected to get valid payload, got ", payload);
@@ -36,6 +37,7 @@ export const entityAdapterWithExtract = (
       );
     }
   };
+
   const extract = (
     payload,
     { name = defaultNormalizedName, mustBeObject = false, mustBeArray = false }
@@ -46,9 +48,11 @@ export const entityAdapterWithExtract = (
       ? result?.map((id) => entities?.[name]?.[id])?.filter((id) => !!id) || []
       : entities?.[name]?.[result];
   };
+
   const extractById = (payload, id, { name = defaultNormalizedName }) => {
     return payload.entities?.[name]?.[id];
   };
+
   const upsertOneFromPayload = (
     state,
     payload,
@@ -59,6 +63,7 @@ export const entityAdapterWithExtract = (
       entityAdapter.upsertOne(state, extractedEntity);
     }
   };
+
   const upsertManyFromPayload = (
     state,
     payload,
@@ -67,10 +72,12 @@ export const entityAdapterWithExtract = (
     const extractedEntities = extract(payload, { name, mustBeArray: true });
     entityAdapter.upsertMany(state, extractedEntities);
   };
+
   const getInitialState = entityAdapter.getInitialState;
   const removeAll = entityAdapter.removeAll;
   const removeOne = entityAdapter.removeOne;
   const upsertOne = entityAdapter.upsertOne;
+
   return {
     extract,
     extractById,

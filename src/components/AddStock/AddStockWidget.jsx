@@ -11,6 +11,7 @@ import TradingViewWidget, { Themes } from "@vendor/TradingViewWidget";
 import React, { useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
+import StockSuggestions from "./StockSuggestions";
 
 const AddStockWidget = ({ onAdd, stopList = [] }) => {
   const dispatch = useDispatch();
@@ -21,6 +22,7 @@ const AddStockWidget = ({ onAdd, stopList = [] }) => {
     formState: { isSubmitting },
     setError,
     watch,
+    setValue,
   } = useForm({
     resolver: yupResolver(addStockSchema),
     context: { arr: stopList },
@@ -31,6 +33,11 @@ const AddStockWidget = ({ onAdd, stopList = [] }) => {
   });
 
   const watchName = watch("name", "");
+
+  const handleSelect = useCallback(
+    (stockName) => setValue("name", stockName, { shouldValidate: true }),
+    [setValue]
+  );
 
   const onSubmit = ({ name }) =>
     dispatch(getOrCreateStockThunk({ name }))
@@ -74,6 +81,7 @@ const AddStockWidget = ({ onAdd, stopList = [] }) => {
         </Button>
         {isSubmitting && <LinearProgress />}
       </form>
+      <StockSuggestions onSelect={handleSelect} />
       <Divider sx={{ mt: 1, mb: 1 }} />
       <Typography variant="caption" color={red[500]}>
         Внимание: данный график не связан с курсом акций и их наличием на
