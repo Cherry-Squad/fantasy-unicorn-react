@@ -3,7 +3,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { Button, Divider, LinearProgress, Typography } from "@mui/material";
 import { red } from "@mui/material/colors";
 import { Box } from "@mui/system";
-import { createStockThunk, getOrCreateStockThunk } from "@redux/stocks";
+import { getOrCreateStockThunk } from "@redux/stocks";
 import { unwrapResult } from "@reduxjs/toolkit";
 import { useMySnackbar } from "@utils/hooks";
 import { addStockSchema } from "@validation/yup";
@@ -71,13 +71,14 @@ const AddStockWidget = ({ onAdd }) => {
       <Divider sx={{ mt: 1, mb: 1 }} />
       <Typography variant="caption" color={red[500]}>
         Внимание: данный график не связан с курсом акций и их наличием на
-        сервере!
+        сервере! Доступны акции только американских торговых площадок.
       </Typography>
       <Box sx={{ flexGrow: 1 }}>
         <TradingViewWidget
           symbol={watchName}
           autosize
           locale="ru"
+          interval={"240"}
           theme={Themes.LIGHT}
         />
       </Box>
