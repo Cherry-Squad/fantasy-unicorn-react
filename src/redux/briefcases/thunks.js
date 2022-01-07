@@ -37,11 +37,9 @@ export const createBriefcaseThunk = createAsyncThunkWrapped(
 export const getOrCreateBriefcaseOfSelfUserThunk = createAsyncThunkWrapped(
   "briefcases/getOrCreateBriefcaseOfSelfUser",
   async (_, { dispatch }) => {
-    const normalized = await dispatch(getBriefcaseOfSelfUserThunk()).then(
-      unwrapResult
-    );
-    if (!!normalized.result) {
-      return normalized;
+    const { payload } = await dispatch(getBriefcaseOfSelfUserThunk());
+    if (!!payload.result) {
+      return payload;
     }
     return await dispatch(createBriefcaseThunk()).then(unwrapResult);
   }
@@ -58,11 +56,9 @@ export const deleteBriefcaseThunk = createAsyncThunkWrapped(
 export const refreshBriefcaseThunk = createAsyncThunkWrapped(
   "briefcases/refresh",
   async ({ userId }, { dispatch }) => {
-    const getResult = await dispatch(getBriefcaseOfSelfUserThunk()).then(
-      unwrapResult
-    );
-    const briefcaseId = getResult.result
-      ? getResult.entities.briefcases[getResult.result].id
+    const { payload } = await dispatch(getBriefcaseOfSelfUserThunk());
+    const briefcaseId = payload.result
+      ? payload.entities.briefcases[payload.result].id
       : null;
     if (briefcaseId) {
       await dispatch(deleteBriefcaseThunk({ id: briefcaseId })).then(

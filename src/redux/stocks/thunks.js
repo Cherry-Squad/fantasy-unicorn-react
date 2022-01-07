@@ -31,7 +31,9 @@ export const getStockByNameThunk = createAsyncThunkWrapped(
 export const getOrCreateStockThunk = createAsyncThunkWrapped(
   "stocks/getOrCreateStock",
   async ({ name }, { dispatch }) => {
-    const { data: getData } = await getStockByNameApi({ name });
+    const { data: getData } = await getStockByNameApi({ name }).catch(() => ({
+      data: null,
+    }));
     if (getData) {
       return normalize(getData, stock);
     }

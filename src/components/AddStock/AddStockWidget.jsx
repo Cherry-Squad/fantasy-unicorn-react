@@ -35,9 +35,14 @@ const AddStockWidget = ({ onAdd }) => {
     dispatch(getOrCreateStockThunk({ name }))
       .then(unwrapResult)
       .then(({ entities, result }) => onAdd(entities.stocks[result]))
-      .catch((error) => {
-        console.error(error);
-        enqueueError(error.message || error);
+      .catch((response) => {
+        console.error(response);
+        const { data } = response;
+        if (data.status === "Not Found 404") {
+          enqueueError("Акция не найдена!");
+        } else {
+          enqueueError("Возникла непредвиденная ошибка");
+        }
       });
 
   return (

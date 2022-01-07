@@ -4,28 +4,34 @@ import React, { useMemo } from "react";
 const StocksList = ({ size, content, ...props }) => {
   const mappedContent = useMemo(
     () =>
-      content.map(({ name }) => (
-        <React.Fragment key={name}>
-          <ListItem disablePadding>
-            <ListItemText primary={name} />
-          </ListItem>
-        </React.Fragment>
-      )),
-    [content]
-  );
-  const dummyContent = useMemo(
-    () =>
-      Array(size - content.length)
-        .fill()
-        .map((_, i) => (
-          <React.Fragment key={i}>
-            <ListItem key={i} disablePadding>
-              <ListItemText primary={"Слот для акции"} />
+      content
+        .sort((a, b) => a.name.localeCompare(b.name))
+        .map(({ name }) => (
+          <React.Fragment key={name}>
+            <ListItem disablePadding>
+              <ListItemText primary={name} />
             </ListItem>
             <Divider sx={{ mt: 1, mb: 1 }} />
           </React.Fragment>
         )),
-    [size, content.length]
+    [content]
+  );
+  const dummyContent = useMemo(
+    () =>
+      Array(size)
+        .fill()
+        .map((_, i) => i + 1)
+        // .filter((i) => i >= content.size)
+        .filter((i) => i > content.length)
+        .map((i) => (
+          <React.Fragment key={i}>
+            <ListItem key={i} disablePadding>
+              <ListItemText secondary={`Слот для акции #${i}`} />
+            </ListItem>
+            <Divider sx={{ mt: 1, mb: 1 }} />
+          </React.Fragment>
+        )),
+    [size, content]
   );
   return (
     <List {...props}>
