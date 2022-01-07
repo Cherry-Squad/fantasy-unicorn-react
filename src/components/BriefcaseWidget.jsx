@@ -15,7 +15,7 @@ import {
   refreshBriefcaseThunk,
 } from "@redux/briefcases";
 import { getStocksByIdsSelector } from "@redux/stocks";
-import { useLoading, useMySnackbar, useParamSelector } from "@utils/hooks";
+import { useLoadingRedux, useMySnackbar, useParamSelector } from "@utils/hooks";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import StocksList from "./StocksList";
@@ -73,13 +73,10 @@ const RefreshButton = ({ briefcase }) => {
   const { user_id: userId, expiring_at: expiringAt } = briefcase;
   const delta = new Date(expiringAt) - new Date();
   const expired = !!expiringAt && delta <= 0;
-  const actionCreator = useCallback(
-    () => refreshBriefcaseThunk({ userId }),
-    [userId]
-  );
-  const { loading, execute } = useLoading(actionCreator, {
+  const { loading, execute } = useLoadingRedux(refreshBriefcaseThunk, {
     immediate: false,
     enqueue: true,
+    params: { userId },
   });
   return (
     <IconButton disabled={!expired || loading} onClick={execute}>

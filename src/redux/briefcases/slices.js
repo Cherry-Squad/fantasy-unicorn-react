@@ -1,4 +1,5 @@
 import { createSlice, createEntityAdapter, isAnyOf } from "@reduxjs/toolkit";
+import { entityAdapterWithExtract } from "@utils/redux";
 import { getBriefcaseOfSelfUserThunk, getStocksOfBriefcaseThunk } from ".";
 import {
   addStockToBriefcaseThunk,
@@ -7,22 +8,24 @@ import {
   removeStockFromBriefcaseThunk,
 } from "./thunks";
 
-export const briefcaseAdapter = createEntityAdapter();
+export const myBriefcaseAdapter = entityAdapterWithExtract(
+  createEntityAdapter(),
+  "briefcases"
+);
 
 export const briefcases = createSlice({
   name: "briefcases",
-  initialState: briefcaseAdapter.getInitialState(),
+  initialState: myBriefcaseAdapter.getInitialState(),
   reducers: {},
   extraReducers: (builder) => {
     builder.addCase(deleteBriefcaseThunk.fulfilled, (state, { payload }) => {
-      briefcaseAdapter.removeOne(state, payload.id);
+      myBriefcaseAdapter.removeOne(state, payload.id);
     });
     builder.addCase(
       getStocksOfBriefcaseThunk.fulfilled,
       (state, { payload, meta }) => {
         const briefcase = state.entities[meta.arg.briefcaseId];
-        console.log(payload, meta, JSON.stringify(briefcase));
-        briefcaseAdapter.upsertOne(state, {
+        myBriefcaseAdapter.upsertOne(state, {
           ...briefcase,
           stocks: payload.entities.stocks
             ? Object.values(payload.entities?.stocks).map(({ id }) => id)
@@ -35,7 +38,7 @@ export const briefcases = createSlice({
       (state, { payload, meta }) => {
         const data = payload.entities.briefcases[payload.result];
         const fromState = state.entities[payload.result];
-        briefcaseAdapter.upsertOne(state, {
+        myBriefcaseAdapter.upsertOne(state, {
           ...data,
           stocks: [...(fromState.stocks || []), meta.arg.stockId],
         });
@@ -48,13 +51,7 @@ export const briefcases = createSlice({
         getBriefcaseOfSelfUserThunk.fulfilled
       ),
       (state, { payload }) => {
-        const data = payload.entities.briefcases?.[payload.result];
-        if (data) {
-          briefcaseAdapter.upsertOne(
-            state,
-            payload.entities.briefcases?.[payload.result]
-          );
-        }
+        myBriefcaseAdapter.upsertOneFromPayload(state, payload);
       }
     );
   },

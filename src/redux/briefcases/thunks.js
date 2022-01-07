@@ -1,4 +1,3 @@
-import { normalize } from "normalizr";
 import { createAsyncThunkWrapped } from "@utils/thunkWrapper";
 import {
   createBriefcaseApi,
@@ -9,12 +8,13 @@ import {
 } from "@api/briefcase";
 import { briefcase, stock } from "@validation/normalizr";
 import { unwrapResult } from "@reduxjs/toolkit";
+import { myNormalize } from "@utils/redux";
 
 export const getStocksOfBriefcaseThunk = createAsyncThunkWrapped(
   "briefcases/getStocksOfBriefcase",
   async ({ briefcaseId }) => {
     const response = await getBriefcaseStocksByIdApi(briefcaseId);
-    return normalize(response.data || [], [stock]);
+    return myNormalize(response.data, [stock]);
   }
 );
 
@@ -22,7 +22,7 @@ export const getBriefcaseOfSelfUserThunk = createAsyncThunkWrapped(
   "briefcases/getBriefcaseOfSelfUser",
   async () => {
     const response = await getBriefcasesOfSelfUserApi();
-    return normalize(response.data?.[0] || {}, briefcase);
+    return myNormalize(response.data?.[0], briefcase);
   }
 );
 
@@ -30,7 +30,7 @@ export const createBriefcaseThunk = createAsyncThunkWrapped(
   "briefcases/createBriefcase",
   async (_, { getState }) => {
     const response = await createBriefcaseApi(getState().auth.user.id);
-    return normalize(response.data, briefcase);
+    return myNormalize(response.data, briefcase);
   }
 );
 
@@ -79,7 +79,7 @@ export const addStockToBriefcaseThunk = createAsyncThunkWrapped(
       stock_id: stockId,
       add: true,
     });
-    return normalize(response.data, briefcase);
+    return myNormalize(response.data, briefcase);
   }
 );
 
@@ -90,6 +90,6 @@ export const removeStockFromBriefcaseThunk = createAsyncThunkWrapped(
       stock_id: stockId,
       add: false,
     });
-    return normalize(response.data, briefcase);
+    return myNormalize(response.data, briefcase);
   }
 );

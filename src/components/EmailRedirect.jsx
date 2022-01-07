@@ -1,5 +1,5 @@
 import { propagateTokenThunk } from "@redux/auth";
-import { UseLoadingEnum, useLoading, useQueryParams } from "@utils/hooks";
+import { UseLoadingEnum, useLoadingRedux, useQueryParams } from "@utils/hooks";
 import React, { useCallback, useMemo } from "react";
 import { Navigate } from "react-router-dom";
 import BigProcess from "./BigProcess";
@@ -17,7 +17,7 @@ const EmailRedirect = () => {
     [client, expiry, accessToken, uid]
   );
 
-  const { status } = useLoading(actionCreator);
+  const { status } = useLoadingRedux(actionCreator);
   console.log("i was rerendered", status);
   const redirect = useMemo(
     () => [UseLoadingEnum.SUCCESS, UseLoadingEnum.ERROR].includes(status),

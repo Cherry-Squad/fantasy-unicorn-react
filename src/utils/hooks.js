@@ -88,15 +88,14 @@ export const UseLoadingEnum = Object.freeze({
   ERROR: 4,
 });
 
-export const useLoading = (
-  actionCreator,
+export const useLoadingPlain = (
+  asyncFunc,
   { immediate = true, enqueue = false, errorToMsg = null } = {}
 ) => {
   const [status, setStatus] = useState(UseLoadingEnum.IDLE);
   const [value, setValue] = useState(null);
   const [error, setError] = useState(null);
 
-  const dispatch = useDispatch();
   const { enqueueError } = useMySnackbar();
 
   // The execute function wraps asyncFunction and
@@ -107,11 +106,9 @@ export const useLoading = (
     setStatus(UseLoadingEnum.PENDING);
     setValue(null);
     setError(null);
-    const action = actionCreator();
 
-    if (action) {
-      return dispatch(actionCreator())
-        .then(unwrapResult)
+    if (asyncFunc) {
+      return asyncFunc()
         .then((response) => {
           setValue(response);
           setStatus(UseLoadingEnum.SUCCESS);
@@ -125,7 +122,7 @@ export const useLoading = (
           }
         });
     }
-  }, [actionCreator, dispatch, enqueueError, errorToMsg, enqueue]);
+  }, [asyncFunc, enqueueError, errorToMsg, enqueue]);
 
   // Call execute if we want to fire it right away.
   // Otherwise execute can be called later, such as
@@ -150,6 +147,23 @@ export const useLoading = (
   };
 };
 
+export const useLoadingRedux = (
+  actionCreator,
+  { immediate = true, enqueue = false, errorToMsg = null, params = {} } = {}
+) => {
+  const stringParams = JSON.stringify(params); // DO NOT REMOVE THIS CAST! (useMemo thinks, that {} != {})
+  const dispatch = useDispatch();
+  const asyncFunc = useMemo(
+    () =>
+      actionCreator
+        ? () =>
+            dispatch(actionCreator(JSON.parse(stringParams))).then(unwrapResult)
+        : null,
+    [stringParams, actionCreator, dispatch]
+  );
+  return useLoadingPlain(asyncFunc, { immediate, enqueue, errorToMsg });
+};
+
 export const useEntityLoading = (
   idField,
   actionCreator,
@@ -158,12 +172,10 @@ export const useEntityLoading = (
   const params = useParams();
   const id = +params[idField];
 
-  const newActionCreator = useCallback(
-    () => actionCreator({ id }),
-    [actionCreator, id]
-  );
-
-  const loadingObj = useLoading(newActionCreator, loadingParams);
+  const loadingObj = useLoadingRedux(actionCreator, {
+    params: { id },
+    ...loadingParams,
+  });
 
   return { [idField]: id, ...loadingObj };
 };

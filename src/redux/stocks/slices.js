@@ -1,5 +1,6 @@
 import { getStocksOfBriefcaseThunk } from "@redux/briefcases/thunks";
 import { createSlice, createEntityAdapter, isAnyOf } from "@reduxjs/toolkit";
+import { entityAdapterWithExtract } from "@utils/redux";
 import {
   createStockThunk,
   getStockByIdThunk,
@@ -7,11 +8,14 @@ import {
   getOrCreateStockThunk,
 } from "./thunks";
 
-export const stockAdapter = createEntityAdapter();
+export const myStockAdapter = entityAdapterWithExtract(
+  createEntityAdapter(),
+  "stocks"
+);
 
 export const stocks = createSlice({
   name: "stocks",
-  initialState: stockAdapter.getInitialState(),
+  initialState: myStockAdapter.getInitialState(),
   reducers: {},
   extraReducers: (builder) => {
     builder.addMatcher(
@@ -22,21 +26,13 @@ export const stocks = createSlice({
         getOrCreateStockThunk.fulfilled
       ),
       (state, { payload }) => {
-        if (payload.entities?.stocks?.[payload.result]) {
-          stockAdapter.upsertOne(
-            state,
-            payload.entities.stocks[payload.result]
-          );
-        }
+        myStockAdapter.upsertOneFromPayload(state, payload);
       }
     );
     builder.addMatcher(
       isAnyOf(getStocksOfBriefcaseThunk.fulfilled),
       (state, { payload }) => {
-        stockAdapter.upsertMany(
-          state,
-          Object.values(payload.entities?.stocks || {})
-        );
+        myStockAdapter.upsertManyFromPayload(state, payload);
       }
     );
   },

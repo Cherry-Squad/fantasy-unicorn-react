@@ -1,14 +1,14 @@
 import { Divider, IconButton, LinearProgress } from "@mui/material";
 import { Box } from "@mui/system";
 import { getAllContestsSelector, getAllContestsThunk } from "@redux/contests";
-import { useLoading } from "@utils/hooks";
+import { useLoadingRedux } from "@utils/hooks";
 import React, { useMemo } from "react";
 import { useSelector } from "react-redux";
 import ContestCard from "./ContestCard";
 import RefreshIcon from "@mui/icons-material/Refresh";
 
 const ContestsWidget = () => {
-  const { loading, execute } = useLoading(getAllContestsThunk, {
+  const { loading, execute } = useLoadingRedux(getAllContestsThunk, {
     enqueue: true,
   });
 
