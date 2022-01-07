@@ -16,7 +16,7 @@ import {
 } from "@redux/briefcases";
 import { getStocksByIdsSelector } from "@redux/stocks";
 import { useLoading, useMySnackbar, useParamSelector } from "@utils/hooks";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import StocksList from "./StocksList";
 import RefreshIcon from "@mui/icons-material/Refresh";
@@ -31,6 +31,8 @@ const AddButton = ({ briefcase, stocks }) => {
   const { enqueueError } = useMySnackbar();
   const dispatch = useDispatch();
 
+  const stockNames = useMemo(() => stocks.map((s) => s.name), [stocks]);
+  console.log(stockNames);
   const { id: briefcaseId, expiring_at: expiringAt } = briefcase;
   const delta = new Date(expiringAt) - new Date();
   const expired = !!expiringAt && delta <= 0;
@@ -61,6 +63,7 @@ const AddButton = ({ briefcase, stocks }) => {
         openModal={openModal}
         setOpenModal={setOpenModal}
         onAdd={onAdd}
+        stopList={stockNames}
       />
     </>
   );

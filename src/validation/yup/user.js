@@ -1,4 +1,4 @@
-import * as yup from "yup";
+import yup from "./utils";
 
 export const emailPasswordSchema = yup
   .object({

@@ -8,7 +8,7 @@ import { Box } from "@mui/system";
 
 // export default makeModal(AddStockModal);
 
-const AddStockModal = ({ openModal, setOpenModal, onAdd }) => {
+const AddStockModal = ({ openModal, setOpenModal, onAdd, stopList }) => {
   const handleClose = useCallback(() => setOpenModal(false), [setOpenModal]);
   return (
     <Modal
@@ -29,11 +29,13 @@ const AddStockModal = ({ openModal, setOpenModal, onAdd }) => {
         >
           Добавление акции
         </Typography>
-        <IconButton onClick={handleClose}>
-          <CloseIcon />
-        </IconButton>
+        <Box>
+          <IconButton onClick={handleClose}>
+            <CloseIcon />
+          </IconButton>
+        </Box>
       </Box>
-      <AddStockWidget onAdd={onAdd} sx={{ flexGrow: 1 }} />
+      <AddStockWidget onAdd={onAdd} sx={{ flexGrow: 1 }} stopList={stopList} />
     </Modal>
   );
 };

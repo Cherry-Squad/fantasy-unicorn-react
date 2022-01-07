@@ -8,11 +8,11 @@ import { unwrapResult } from "@reduxjs/toolkit";
 import { useMySnackbar } from "@utils/hooks";
 import { addStockSchema } from "@validation/yup";
 import TradingViewWidget, { Themes } from "@vendor/TradingViewWidget";
-import React from "react";
+import React, { useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
 
-const AddStockWidget = ({ onAdd }) => {
+const AddStockWidget = ({ onAdd, stopList = [] }) => {
   const dispatch = useDispatch();
   const { enqueueError } = useMySnackbar();
   const {
@@ -23,6 +23,7 @@ const AddStockWidget = ({ onAdd }) => {
     watch,
   } = useForm({
     resolver: yupResolver(addStockSchema),
+    context: { arr: stopList },
     mode: "all",
     defaultValues: {
       name: "",
@@ -38,7 +39,12 @@ const AddStockWidget = ({ onAdd }) => {
       .catch((response) => {
         console.error(response);
         const { data } = response;
-        if (data.status === "Not Found 404") {
+        if (
+          data.status === "Not Found 404" ||
+          data.error?.startsWith(
+            "An Error occurred Finnhub couldn't find symbol"
+          )
+        ) {
           enqueueError("Акция не найдена!");
         } else {
           enqueueError("Возникла непредвиденная ошибка");
@@ -78,7 +84,7 @@ const AddStockWidget = ({ onAdd }) => {
           symbol={watchName}
           autosize
           locale="ru"
-          interval={"240"}
+          interval={5}
           theme={Themes.LIGHT}
         />
       </Box>
