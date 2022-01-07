@@ -1,4 +1,5 @@
 import FormTextField from "@components/FormTextField";
+import FullTradingWidget from "@components/FullTradingWidget";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Button, Divider, LinearProgress, Typography } from "@mui/material";
 import { red } from "@mui/material/colors";
@@ -83,19 +84,7 @@ const AddStockWidget = ({ onAdd, stopList = [] }) => {
       </form>
       <StockSuggestions onSelect={handleSelect} />
       <Divider sx={{ mt: 1, mb: 1 }} />
-      <Typography variant="caption" color={red[500]}>
-        Внимание: данный график не связан с курсом акций и их наличием на
-        сервере! Доступны акции только американских торговых площадок.
-      </Typography>
-      <Box sx={{ flexGrow: 1 }}>
-        <TradingViewWidget
-          symbol={watchName}
-          autosize
-          locale="ru"
-          interval={5}
-          theme={Themes.LIGHT}
-        />
-      </Box>
+      <FullTradingWidget symbol={watchName} />
     </>
   );
 };
