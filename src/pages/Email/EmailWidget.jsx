@@ -15,7 +15,7 @@ import MyLink from "@components/MyLink";
 const EmailWidget = ({ userEmail, sendOncePer = 60 }) => {
   const dispatch = useDispatch();
   const { enqueueError, enqueueSuccess } = useMySnackbar();
-  const [delay, setDelay] = useState(sendOncePer);
+  const [delay, setDelay] = useState(0);
 
   useIntervalWhen(() => setDelay(delay - 1), 1000, delay > 0, false);
 

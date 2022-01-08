@@ -24,7 +24,7 @@ import { changePasswordWithTokenThunk } from "@redux/auth";
 import { unwrapResult } from "@reduxjs/toolkit";
 
 const RequestEmailForm = ({ sendOncePer = 60 }) => {
-  const [delay, setDelay] = useState(sendOncePer);
+  const [delay, setDelay] = useState(0);
   const { enqueueError, enqueueSuccess } = useMySnackbar();
 
   const {
@@ -53,7 +53,7 @@ const RequestEmailForm = ({ sendOncePer = 60 }) => {
         .finally(() => {
           setDelay(sendOncePer);
         }),
-    [setDelay, enqueueError, sendOncePer]
+    [setDelay, enqueueError, sendOncePer, enqueueSuccess]
   );
 
   const disabled = delay > 0;
