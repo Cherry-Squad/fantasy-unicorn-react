@@ -37,7 +37,7 @@ export const loginThunk = createAsyncThunk(
       store.dispatch(setAuthBag(authBag));
       return myNormalize(data.data, user);
     } catch (e) {
-      console.error(e);
+      console.error("Login thunk error", e);
       return store.rejectWithValue(e.response.data || e.message);
     }
   }

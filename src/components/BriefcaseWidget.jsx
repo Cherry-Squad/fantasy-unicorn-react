@@ -32,7 +32,6 @@ const AddButton = ({ briefcase, stocks }) => {
   const dispatch = useDispatch();
 
   const stockNames = useMemo(() => stocks.map((s) => s.name), [stocks]);
-  console.log(stockNames);
   const { id: briefcaseId, expiring_at: expiringAt } = briefcase;
   const delta = new Date(expiringAt) - new Date();
   const expired = !!expiringAt && delta <= 0;
@@ -45,10 +44,7 @@ const AddButton = ({ briefcase, stocks }) => {
       setLoading(true);
       dispatch(addStockToBriefcaseThunk({ stockId: id, briefcaseId }))
         .then(() => setOpenModal(false))
-        .catch((e) => {
-          console.error(e);
-          enqueueError(e);
-        })
+        .catch((e) => enqueueError(e))
         .finally(() => setLoading(false));
     },
     [dispatch, setOpenModal, briefcaseId, enqueueError]
@@ -86,34 +82,6 @@ const RefreshButton = ({ briefcase }) => {
 };
 
 const BriefcaseWidget = ({ briefcaseSize = 10 }) => {
-  // const briefcaseLoading = useLoading(getOrCreateBriefcaseOfSelfUserThunk, {
-  //   enqueue: true,
-  // });
-
-  // const userId = useSelector(userIdSelector);
-
-  // const briefcase =
-  //   useParamSelector(getBriefcaseByUserIdSelector, {
-  //     userId,
-  //   }) || {};
-
-  // const { id, expiring_at: expiringAt, stocks: stocksIds } = briefcase;
-
-  // const stocksAction = useCallback(
-  //   () => getStocksOfBriefcaseThunk({ briefcaseId: id }),
-  //   [id]
-  // );
-
-  // const stocksLoading = useLoading(stocksAction, {
-  //   enqueue: true,
-  // });
-
-  // const stocks =
-  //   useParamSelector(getStocksByIdsSelector, { ids: stocksIds || [] }) || [];
-
-  // console.log(briefcaseLoading.status, stocksLoading.status, userId, id);
-
-  // const loading = briefcaseLoading.loading || stocksLoading.loading;
   const userId = useSelector(userIdSelector);
   const dispatch = useDispatch();
   const { enqueueError } = useMySnackbar();
@@ -121,7 +89,7 @@ const BriefcaseWidget = ({ briefcaseSize = 10 }) => {
   const [executedOnce, setExecutedOnce] = useState(null);
   const briefcase =
     useParamSelector(getBriefcaseByUserIdSelector, { userId }) || {};
-  const { id, expiring_at: expiringAt, stocks: stocksIds } = briefcase;
+  const { expiring_at: expiringAt, stocks: stocksIds } = briefcase;
   const stocks =
     useParamSelector(getStocksByIdsSelector, { ids: stocksIds || [] }) || [];
 

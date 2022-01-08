@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback } from "react";
 import {
   Button,
   Container,
@@ -37,29 +37,32 @@ const LoginWidget = ({ redirectTo = "/" }) => {
     defaultValues: { email: "", password: "" },
   });
 
-  const onSubmit = ({ email, password }) =>
-    dispatch(loginThunk({ email, password }))
-      .then(unwrapResult)
-      .then(() => {
-        navigate(redirectTo, { replace: true });
-      })
-      .catch((e) => {
-        if (
-          e.errors?.includes("Invalid login credentials. Please try again.")
-        ) {
-          enqueueError("Неверный email или пароль");
-        } else if (
-          e.errors?.some((v) =>
-            /A confirmation email was sent to your account at '.+'\. You must follow the instructions in the email before your account can be activated/.test(
-              v
+  const onSubmit = useCallback(
+    ({ email, password }) =>
+      dispatch(loginThunk({ email, password }))
+        .then(unwrapResult)
+        .then(() => {
+          navigate(redirectTo, { replace: true });
+        })
+        .catch((e) => {
+          if (
+            e.errors?.includes("Invalid login credentials. Please try again.")
+          ) {
+            enqueueError("Неверный email или пароль");
+          } else if (
+            e.errors?.some((v) =>
+              /A confirmation email was sent to your account at '.+'\. You must follow the instructions in the email before your account can be activated/.test(
+                v
+              )
             )
-          )
-        ) {
-          navigate(`/email?email=${email}`);
-        } else {
-          enqueueError("Возникла непредвиденная ошибка");
-        }
-      });
+          ) {
+            navigate(`/email?email=${email}`);
+          } else {
+            enqueueError("Возникла непредвиденная ошибка");
+          }
+        }),
+    [dispatch, navigate, enqueueError, redirectTo]
+  );
 
   return (
     <Container component="main" maxWidth="xs">

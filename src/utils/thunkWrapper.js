@@ -2,7 +2,7 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 
 export const thunkWrapper = (func) => (arg, thunkApi) =>
   func(arg, thunkApi).catch((e) => {
-    console.error(e);
+    console.error("Thunk error", e);
     return thunkApi.rejectWithValue(
       e?.response
         ? (({ data, status, headers }) => ({ data, status, headers }))(

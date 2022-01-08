@@ -18,7 +18,7 @@ const EmailRedirect = () => {
   );
 
   const { status } = useLoadingRedux(actionCreator);
-  console.log("i was rerendered", status);
+
   const redirect = useMemo(
     () => [UseLoadingEnum.SUCCESS, UseLoadingEnum.ERROR].includes(status),
     [status]

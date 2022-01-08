@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import {
   Avatar,
   Button,
@@ -47,37 +47,40 @@ export default function SignUpWidget() {
     },
   });
 
-  const onSubmit = ({ username, email, password }) =>
-    dispatch(usersCreateThunk({ username, email, password }))
-      .then(unwrapResult)
-      .then(() => {
-        setRedirectEmail(email);
-        setRedirect(true);
-      })
-      .catch((error) => {
-        console.error(error);
-        let errored = false;
-        if (error?.data) {
-          const errors = error?.data?.errors;
-          if (errors.email?.includes("has already been taken")) {
-            enqueueError("Email уже был занят!");
-            setError("email", {
-              type: "manual",
-              message: "Этот email недоступен",
-            });
-            errored = true;
+  const onSubmit = useCallback(
+    ({ username, email, password }) =>
+      dispatch(usersCreateThunk({ username, email, password }))
+        .then(unwrapResult)
+        .then(() => {
+          setRedirectEmail(email);
+          setRedirect(true);
+        })
+        .catch((error) => {
+          console.error("Sign up failed", error);
+          let errored = false;
+          if (error?.data) {
+            const errors = error?.data?.errors;
+            if (errors.email?.includes("has already been taken")) {
+              enqueueError("Email уже был занят!");
+              setError("email", {
+                type: "manual",
+                message: "Этот email недоступен",
+              });
+              errored = true;
+            }
+            if (errors?.username?.includes("has already been taken")) {
+              enqueueError("Username уже был занят!");
+              setError("username", {
+                type: "manual",
+                message: "Этот username недоступен",
+              });
+              errored = true;
+            }
           }
-          if (errors?.username?.includes("has already been taken")) {
-            enqueueError("Username уже был занят!");
-            setError("username", {
-              type: "manual",
-              message: "Этот username недоступен",
-            });
-            errored = true;
-          }
-        }
-        if (!errored) enqueueError("Что-то пошло не так...");
-      });
+          if (!errored) enqueueError("Что-то пошло не так...");
+        }),
+    [dispatch, enqueueError, setError]
+  );
 
   if (redirect) {
     return <Navigate to={`/email?email=${redirectEmail}`} replace />;

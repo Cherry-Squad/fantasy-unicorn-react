@@ -6,7 +6,7 @@ import StageRedirect from "@components/StageRedirect";
 
 const StageRoute = ({ stage: expectedStage, children }) => {
   const stage = useSelector(getSelfUserStageSelector);
-  console.log("stage: " + stage);
+  console.debug("stage: " + stage);
   const decision = (() => {
     if (expectedStage.includes) {
       return expectedStage.includes(stage);

@@ -10,7 +10,7 @@ export const useMySnackbar = () => {
 
   const enqueueError = useCallback(
     (msg, params) => {
-      console.error(msg);
+      console.error("Enqueued error", msg);
       enqueueSnackbar(msg, { ...params, variant: "error" });
     },
     [enqueueSnackbar]

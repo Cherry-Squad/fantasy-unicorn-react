@@ -40,24 +40,26 @@ const AddStockWidget = ({ onAdd, stopList = [] }) => {
     [setValue]
   );
 
-  const onSubmit = ({ name }) =>
-    dispatch(getOrCreateStockThunk({ name }))
-      .then(unwrapResult)
-      .then(({ entities, result }) => onAdd(entities.stocks[result]))
-      .catch((response) => {
-        console.error(response);
-        const { data } = response;
-        if (
-          data.status === "Not Found 404" ||
-          data.error?.startsWith(
-            "An Error occurred Finnhub couldn't find symbol"
-          )
-        ) {
-          enqueueError("Акция не найдена!");
-        } else {
-          enqueueError("Возникла непредвиденная ошибка");
-        }
-      });
+  const onSubmit = useCallback(
+    ({ name }) =>
+      dispatch(getOrCreateStockThunk({ name }))
+        .then(unwrapResult)
+        .then(({ entities, result }) => onAdd(entities.stocks[result]))
+        .catch((response) => {
+          const { data } = response;
+          if (
+            data.status === "Not Found 404" ||
+            data.error?.startsWith(
+              "An Error occurred Finnhub couldn't find symbol"
+            )
+          ) {
+            enqueueError("Акция не найдена!");
+          } else {
+            enqueueError("Возникла непредвиденная ошибка");
+          }
+        }),
+    [dispatch, onAdd, enqueueError]
+  );
 
   return (
     <>
