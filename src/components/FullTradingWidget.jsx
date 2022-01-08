@@ -4,7 +4,7 @@ import { Box } from "@mui/system";
 import TradingViewWidget, { Themes } from "@vendor/TradingViewWidget";
 import React from "react";
 
-const FullTradingWidget = ({ symbol = undefined, sx = { flexGrow: 1 } }) => (
+const FullTradingWidget = ({ symbol = "AAPL", sx = { flexGrow: 1 } }) => (
   <>
     <Typography variant="caption" color={red[500]}>
       Внимание: данный график не связан с курсом акций и их наличием на сервере!

@@ -1,4 +1,4 @@
-import { loginThunk } from "@redux/auth";
+import { changePasswordWithTokenThunk, loginThunk } from "@redux/auth";
 import { createSlice, createEntityAdapter, isAnyOf } from "@reduxjs/toolkit";
 import { entityAdapterWithExtract } from "@utils/redux";
 import { usersCreateThunk, usersGetSelfUserThunk } from "./thunks";
@@ -17,7 +17,8 @@ export const users = createSlice({
       isAnyOf(
         usersCreateThunk.fulfilled,
         usersGetSelfUserThunk.fulfilled,
-        loginThunk.fulfilled
+        loginThunk.fulfilled,
+        changePasswordWithTokenThunk.fulfilled
       ),
       (state, { payload }) => {
         usersAdapter.upsertOneFromPayload(state, payload);

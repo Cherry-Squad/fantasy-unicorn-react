@@ -108,9 +108,7 @@ const LoginWidget = ({ redirectTo = "/" }) => {
           {isSubmitting && <LinearProgress />}
           <Grid container>
             <Grid item xs>
-              <MyLink to="" href="#">
-                {"Забыли пароль?"}
-              </MyLink>
+              <MyLink to="/change-password">{"Забыли пароль?"}</MyLink>
             </Grid>
             <Grid item>
               <MyLink to="/sign_up">{"Нет аккаунта? Зарегистрируйтесь"}</MyLink>

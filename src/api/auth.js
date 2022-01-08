@@ -21,3 +21,22 @@ export const getSelfUserApi = () => mainAxios.get("/auth/validate_token");
 
 export const resendConfirmationMailApi = (email) =>
   basicAxios().post("/auth/confirmation", { email });
+
+export const sendRecoverPasswordEmailApi = ({ email }) =>
+  basicAxios().post("/auth/password", { email });
+
+export const changePasswordWithTokenApi = ({
+  password,
+  reset_password_token,
+}) =>
+  basicAxios().put("/auth/password", {
+    password,
+    password_confirmation: password,
+    reset_password_token,
+  });
+
+export const changePasswordApi = ({ password, reset_password_token }) =>
+  mainAxios.put("/auth/password", {
+    password,
+    reset_password_token,
+  });

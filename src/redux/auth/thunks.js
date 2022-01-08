@@ -1,4 +1,4 @@
-import { createAsyncThunk } from "@reduxjs/toolkit";
+import { createAsyncThunk, unwrapResult } from "@reduxjs/toolkit";
 
 import {
   ACCESS_TOKEN_HEADER,
@@ -6,12 +6,16 @@ import {
   UID_HEADER,
   EXPIRY_HEADER,
 } from "@dict/headers";
-import { signInApi, resendConfirmationMailApi } from "@api/auth";
-import { normalize } from "normalizr";
+import {
+  signInApi,
+  resendConfirmationMailApi,
+  changePasswordWithTokenApi,
+} from "@api/auth";
 import { user } from "@validation/normalizr";
 import { setAuthBag, setTokens, setUser } from "./actions";
 import { createAsyncThunkWrapped } from "@utils/thunkWrapper";
 import { usersGetSelfUserThunk } from "@redux/users";
+import { myNormalize } from "@utils/redux";
 
 export const loginThunk = createAsyncThunk(
   "auth/login",
@@ -31,7 +35,7 @@ export const loginThunk = createAsyncThunk(
         },
       };
       store.dispatch(setAuthBag(authBag));
-      return normalize(data.data, user);
+      return myNormalize(data.data, user);
     } catch (e) {
       console.error(e);
       return store.rejectWithValue(e.response.data || e.message);
@@ -55,5 +59,25 @@ export const propagateTokenThunk = createAsyncThunkWrapped(
     const id = bag.payload.result;
     dispatch(setUser({ id }));
     return {};
+  }
+);
+
+export const changePasswordWithTokenThunk = createAsyncThunkWrapped(
+  "auth/changePasswordWithToken",
+  async ({ password, token }, { dispatch }) => {
+    const response = await changePasswordWithTokenApi({
+      password,
+      reset_password_token: token,
+    });
+    const { data, headers } = response;
+    await dispatch(
+      propagateTokenThunk({
+        accessToken: headers[ACCESS_TOKEN_HEADER],
+        client: headers[CLIENT_HEADER],
+        uid: headers[UID_HEADER],
+        expiry: headers[EXPIRY_HEADER],
+      })
+    ).then(unwrapResult);
+    return myNormalize(data.data, user);
   }
 );
