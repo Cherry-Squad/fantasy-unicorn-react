@@ -6,8 +6,6 @@ import React, { useCallback, useRef } from "react";
 import { Typography, IconButton } from "@mui/material";
 import { Box } from "@mui/system";
 
-// export default makeModal(AddStockModal);
-
 const AddStockModal = ({ openModal, setOpenModal, onAdd, stopList }) => {
   const handleClose = useCallback(() => setOpenModal(false), [setOpenModal]);
   return (

@@ -6,6 +6,7 @@ import { useLocation, Link as RouterLink } from "react-router-dom";
 const localizationTable = {
   "": "Fantasy Unicorn",
   contest: "Конкурсы",
+  register: "Регистрация",
 };
 
 const localizeName = (name) => {

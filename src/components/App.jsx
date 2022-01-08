@@ -20,6 +20,7 @@ import EmailRedirect from "./EmailRedirect";
 import ContestsPage from "@pages/ContestsPage";
 import { ContestPage } from "@pages/Contest";
 import { ChangePasswordPage } from "@pages/ChangePasswordPage";
+import { ContestApplicationCreationPage } from "@pages/Contest/ContestApplicationCreation";
 
 const App = () => (
   <SnackbarProvider maxSnack={3} autoHideDuration={5000}>
@@ -30,6 +31,10 @@ const App = () => (
             <Route index element={<MainPage />} />
             <Route path="contest" element={<ContestsPage />} />
             <Route path="contest/:id" element={<ContestPage />} />
+            <Route
+              path="contest/:id/register"
+              element={<ContestApplicationCreationPage />}
+            />
           </Route>
           <Route
             element={

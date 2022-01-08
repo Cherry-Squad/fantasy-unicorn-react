@@ -31,10 +31,11 @@ const Copyright = (props) => {
       align="center"
       {...props}
     >
-      {"Copyright © "}
+      {"Сделано с ❤️ командой "}
       <Link color="inherit" href="https://github.com/Cherry-Squad">
         Cherry Squad
-      </Link>{" "}
+      </Link>
+      {", 2021-"}
       {new Date().getFullYear()}
       {"."}
     </Typography>

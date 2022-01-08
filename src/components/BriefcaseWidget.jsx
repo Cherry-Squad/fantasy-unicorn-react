@@ -24,6 +24,7 @@ import VisibleTimer from "./VisibleTimer";
 import { AddStockModal } from "./AddStock";
 import AddIcon from "@mui/icons-material/Add";
 import { unwrapResult } from "@reduxjs/toolkit";
+import { BRIEFCASE_STOCK_COUNT } from "@dict/briefcase";
 
 const AddButton = ({ briefcase, stocks }) => {
   const [loading, setLoading] = useState(false);
@@ -35,7 +36,7 @@ const AddButton = ({ briefcase, stocks }) => {
   const { id: briefcaseId, expiring_at: expiringAt } = briefcase;
   const delta = new Date(expiringAt) - new Date();
   const expired = !!expiringAt && delta <= 0;
-  const canAdd = !expired && stocks.length < 10;
+  const canAdd = !expired && stocks.length < BRIEFCASE_STOCK_COUNT;
 
   const onClick = useCallback(() => setOpenModal(true), [setOpenModal]);
 
@@ -81,7 +82,7 @@ const RefreshButton = ({ briefcase }) => {
   );
 };
 
-const BriefcaseWidget = ({ briefcaseSize = 10 }) => {
+const BriefcaseWidget = ({ briefcaseSize = BRIEFCASE_STOCK_COUNT }) => {
   const userId = useSelector(userIdSelector);
   const dispatch = useDispatch();
   const { enqueueError } = useMySnackbar();
