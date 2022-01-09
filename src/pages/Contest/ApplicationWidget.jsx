@@ -45,14 +45,16 @@ const ApplicationWidget = ({
   );
 
   const stockIds = useMemo(
-    () => applicationStocks?.map(({ stock_id }) => stock_id) || [],
+    () => applicationStocks.map(({ stock_id }) => stock_id) || [],
     [applicationStocks]
   );
 
   const stocks = useParamSelector(getStocksByIdsSelector, { ids: stockIds });
 
+  console.log(applicationStocks);
+
   const applicationRegProcessed = applicationStocks
-    ? applicationStocks?.every(({ regPrice }) => regPrice !== null)
+    ? applicationStocks.every(({ reg_price }) => reg_price !== null)
     : false;
 
   const contestIsOver =
@@ -102,7 +104,7 @@ const ApplicationWidget = ({
       )}
       {applicationRegProcessed ? (
         <Box sx={{ display: "flex", flexWrap: "wrap" }}>
-          {stocks?.map((stock) => (
+          {stocks.map((stock) => (
             <StockItem
               key={stock.name}
               application={application}
