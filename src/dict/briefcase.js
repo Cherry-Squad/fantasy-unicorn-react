@@ -1,1 +1,1 @@
-export const BRIEFCASE_STOCK_COUNT = 10;
+export const BRIEFCASE_STOCK_COUNT = 5;
