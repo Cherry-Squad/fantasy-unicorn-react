@@ -8,6 +8,7 @@ import RegisterToContestBar from "./RegisterToContestBar";
 import { getSelfUserApplicationByContestIdSelector } from "@redux/contestApplications";
 import { useParamSelector } from "@utils/hooks";
 import ApplicationWidget from "./ApplicationWidget";
+import ContestScoreboardWidget from "./ContestScoreboardWidget";
 
 const ContestWidget = ({ contest }) => {
   const {
@@ -70,6 +71,8 @@ const ContestWidget = ({ contest }) => {
           <ApplicationWidget contest={contest} application={userApplication} />
         </>
       )}
+      <Divider sx={{ mt: 1, mb: 1 }} />
+      <ContestScoreboardWidget contest={contest} />
     </Box>
   );
 };

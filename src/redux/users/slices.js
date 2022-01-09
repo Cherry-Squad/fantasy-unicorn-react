@@ -1,4 +1,5 @@
 import { changePasswordWithTokenThunk, loginThunk } from "@redux/auth";
+import { getApplicationsOfContestThunk } from "@redux/contestApplications";
 import { createSlice, createEntityAdapter, isAnyOf } from "@reduxjs/toolkit";
 import { entityAdapterWithExtract } from "@utils/redux";
 import { usersCreateThunk, usersGetSelfUserThunk } from "./thunks";
@@ -22,6 +23,12 @@ export const users = createSlice({
       ),
       (state, { payload }) => {
         usersAdapter.upsertOneFromPayload(state, payload);
+      }
+    );
+    builder.addMatcher(
+      isAnyOf(getApplicationsOfContestThunk.fulfilled),
+      (state, { payload }) => {
+        usersAdapter.upsertManyFromPayload(state, payload);
       }
     );
   },
