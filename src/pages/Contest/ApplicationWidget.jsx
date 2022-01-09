@@ -55,8 +55,6 @@ const ApplicationWidget = ({
 
   const stocks = useParamSelector(getStocksByIdsSelector, { ids: stockIds });
 
-  console.log(applicationStocks);
-
   const applicationRegProcessed = applicationStocks
     ? applicationStocks.every(({ reg_price }) => reg_price !== null)
     : false;

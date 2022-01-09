@@ -36,7 +36,6 @@ const FreeStockListForm = ({ stocks, setStocks }) => {
 
   const onAdd = useCallback(
     ({ id, name }) => {
-      console.log(id, name);
       setStocks([...stocks, { id, name }]);
       setOpenModal(false);
     },

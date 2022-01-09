@@ -206,6 +206,7 @@ function EnhancedTable({ rows }) {
         </Table>
       </TableContainer>
       <TablePagination
+        labelRowsPerPage="Строк на страницу"
         rowsPerPageOptions={[5, 15, 150]}
         component="div"
         count={rows.length}

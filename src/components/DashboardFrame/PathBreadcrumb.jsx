@@ -7,6 +7,8 @@ const localizationTable = {
   "": "Fantasy Unicorn",
   contest: "Конкурсы",
   register: "Регистрация",
+  history: "История игр",
+  leaderboard: "Таблица рекордов",
 };
 
 const localizeName = (name) => {

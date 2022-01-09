@@ -21,6 +21,7 @@ import ContestsPage from "@pages/ContestsPage";
 import { ContestPage } from "@pages/Contest";
 import { ChangePasswordPage } from "@pages/ChangePasswordPage";
 import { PlayHistoryPage } from "@pages/PlayHistory";
+import { GlobalLeaderboardPage } from "@pages/GlobalLeaderboard";
 
 const App = () => (
   <SnackbarProvider maxSnack={3} autoHideDuration={5000}>
@@ -32,6 +33,7 @@ const App = () => (
             <Route path="contest" element={<ContestsPage />} />
             <Route path="contest/:id" element={<ContestPage />} />
             <Route path="history" element={<PlayHistoryPage />} />
+            <Route path="leaderboard" element={<GlobalLeaderboardPage />} />
           </Route>
           <Route
             element={

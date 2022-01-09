@@ -3,6 +3,7 @@ import { getApplicationsOfContestThunk } from "@redux/contestApplications";
 import { registerOnContestThunk } from "@redux/contests";
 import { createSlice, createEntityAdapter, isAnyOf } from "@reduxjs/toolkit";
 import { entityAdapterWithExtract } from "@utils/redux";
+import { getGlobalLeaderboardThunk } from ".";
 import { usersCreateThunk, usersGetSelfUserThunk } from "./thunks";
 
 export const usersAdapter = entityAdapterWithExtract(
@@ -32,7 +33,10 @@ export const users = createSlice({
       }
     );
     builder.addMatcher(
-      isAnyOf(getApplicationsOfContestThunk.fulfilled),
+      isAnyOf(
+        getApplicationsOfContestThunk.fulfilled,
+        getGlobalLeaderboardThunk.fulfilled
+      ),
       (state, { payload }) => {
         usersAdapter.upsertManyFromPayload(state, payload);
       }

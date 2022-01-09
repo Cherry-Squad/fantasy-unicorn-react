@@ -1,4 +1,4 @@
-import { StatusRu } from "@dict/contest";
+import { StatusEnum, StatusRu } from "@dict/contest";
 import { Divider, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import React from "react";
@@ -9,6 +9,7 @@ import { getSelfUserApplicationByContestIdSelector } from "@redux/contestApplica
 import { useParamSelector } from "@utils/hooks";
 import ApplicationWidget from "./ApplicationWidget";
 import ContestScoreboardWidget from "./ContestScoreboardWidget";
+import VisibleTimer from "@components/VisibleTimer";
 
 const ContestWidget = ({ contest }) => {
   const {
@@ -38,6 +39,15 @@ const ContestWidget = ({ contest }) => {
           #{id}
         </Typography>
         <Typography variant="body1">{StatusRu[status]}</Typography>
+        {status !== StatusEnum.FINISHED && (
+          <VisibleTimer
+            targetDate={
+              new Date(
+                status === StatusEnum.CREATED ? regEndingAt : summarizingAt
+              )
+            }
+          />
+        )}
         <ContestStatusIcon status={status} />
       </Box>
       <Box sx={{ display: "flex", justifyContent: "space-between" }}>

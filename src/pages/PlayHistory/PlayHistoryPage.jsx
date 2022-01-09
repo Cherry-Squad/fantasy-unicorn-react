@@ -4,7 +4,7 @@ import React from "react";
 import PlayHistoryWidget from "./PlayHistoryWidget";
 
 const PlayHistoryPage = () => {
-  useDocumentTitle("Конкурсы");
+  useDocumentTitle("История игр");
   return (
     <Paper>
       <PlayHistoryWidget />
