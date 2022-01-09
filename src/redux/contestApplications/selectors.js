@@ -25,3 +25,10 @@ export const getSelfUserApplicationByContestIdSelector = createSelector(
       (v) => +v.contest_id === +contestId && +v.user_id === +userId
     )
 );
+
+export const getSelfUserApplicationsSelector = createSelector(
+  applicationsSelector,
+  userIdSelector,
+  ({ entities }, userId) =>
+    Object.values(entities).filter((v) => +v.user_id === +userId)
+);

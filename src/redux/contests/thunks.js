@@ -8,6 +8,7 @@ import {
 import { myNormalize } from "@utils/redux";
 import { getApplicationsOfContestThunk } from "@redux/contestApplications";
 import { unwrapResult } from "@reduxjs/toolkit";
+import { subCoins } from "@redux/users";
 
 export const getAllContestsThunk = createAsyncThunkWrapped(
   "contests/getAllContests",
@@ -27,7 +28,10 @@ export const getContestByIdThunk = createAsyncThunkWrapped(
 
 export const registerOnContestThunk = createAsyncThunkWrapped(
   "contests/registerOnContest",
-  async ({ contestId, stocks, directions, multipliers }, { dispatch }) => {
+  async (
+    { contestId, stocks, directions, multipliers, userId, payment },
+    { dispatch }
+  ) => {
     const response = await registerOnContestApi(contestId, {
       items: stocks.map(({ id }) => ({
         stock_id: id,
@@ -38,6 +42,7 @@ export const registerOnContestThunk = createAsyncThunkWrapped(
     await dispatch(getApplicationsOfContestThunk({ contestId })).then(
       unwrapResult
     );
+    dispatch(subCoins({ userId, payment }));
     return myNormalize(response.data.contest_app_stocks, [
       contestApplicationStocks,
     ]);

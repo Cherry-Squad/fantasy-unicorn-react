@@ -42,7 +42,7 @@ const AddStockWidget = ({ onAdd, stopList = [] }) => {
 
   const onSubmit = useCallback(
     ({ name }) =>
-      dispatch(getOrCreateStockThunk({ name }))
+      dispatch(getOrCreateStockThunk({ name: name.toUpperCase() }))
         .then(unwrapResult)
         .then(({ entities, result }) => onAdd(entities.stocks[result]))
         .catch((response) => {

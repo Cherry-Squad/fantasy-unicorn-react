@@ -21,6 +21,9 @@ const StockItem = ({ application, applicationStocks, stock }) => {
     multiplier,
     direction_up: directionUp,
   } = applicationStocks.find((app) => +app.stock_id === +stock.id);
+
+  const success = directionUp ? regPrice <= finalPrice : regPrice > finalPrice;
+
   return (
     <Chip
       label={`${stock.name} $${regPrice}${
@@ -28,6 +31,7 @@ const StockItem = ({ application, applicationStocks, stock }) => {
       } x${multiplier} ${!!finalPrice ? `итог: $${finalPrice}` : ""}`}
       variant="outlined"
       sx={{ m: 1 }}
+      color={!!finalPrice ? (success ? "success" : "error") : undefined}
     />
   );
 };

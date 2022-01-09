@@ -1,5 +1,6 @@
 import { changePasswordWithTokenThunk, loginThunk } from "@redux/auth";
 import { getApplicationsOfContestThunk } from "@redux/contestApplications";
+import { registerOnContestThunk } from "@redux/contests";
 import { createSlice, createEntityAdapter, isAnyOf } from "@reduxjs/toolkit";
 import { entityAdapterWithExtract } from "@utils/redux";
 import { usersCreateThunk, usersGetSelfUserThunk } from "./thunks";
@@ -12,7 +13,12 @@ export const usersAdapter = entityAdapterWithExtract(
 export const users = createSlice({
   name: "users",
   initialState: usersAdapter.getInitialState(),
-  reducers: {},
+  reducers: {
+    subCoins(state, { payload: { userId, payment } }) {
+      const user = state.entities[userId];
+      usersAdapter.upsertOne(state, { ...user, coins: user.coins - payment });
+    },
+  },
   extraReducers: (builder) => {
     builder.addMatcher(
       isAnyOf(
@@ -33,6 +39,8 @@ export const users = createSlice({
     );
   },
 });
+
+export const subCoins = users.actions.subCoins;
 
 const reducer = users.reducer;
 

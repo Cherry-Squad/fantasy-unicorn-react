@@ -1,10 +1,4 @@
-import {
-  Divider,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemText,
-} from "@mui/material";
+import { Divider, List, ListItem, ListItemText } from "@mui/material";
 import React, { useCallback, useContext, useMemo } from "react";
 import StockClickListenerContext from "./StockClickListenerContext";
 
@@ -18,10 +12,8 @@ const StockItem = ({ stock }) => {
   );
 
   return (
-    <ListItem disablePadding>
-      <ListItemButton onClick={handleClick}>
-        <ListItemText primary={name} />
-      </ListItemButton>
+    <ListItem disablePadding button onClick={handleClick}>
+      <ListItemText primary={name} />
     </ListItem>
   );
 };

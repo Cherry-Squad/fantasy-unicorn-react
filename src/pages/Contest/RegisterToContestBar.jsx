@@ -1,16 +1,24 @@
 import FullTradingWidget from "@components/FullTradingWidget";
 import StockClickListenerContext from "@components/StockClickListenerContext";
 import { StatusEnum } from "@dict/contest";
-import { Button, useMediaQuery } from "@mui/material";
+import { Button, Typography, useMediaQuery } from "@mui/material";
 import { Box } from "@mui/system";
+import { getSelfUserSelector } from "@redux/users";
 import React, { useCallback, useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import ContestApplicationCreationWidget from "./ContestApplicationCreation";
 
 const RegisterToContestBar = ({ contest, notRegistered = true }) => {
   const [openRegisterWidget, setOpenRegisterWidget] = useState(false);
   const [symbol, setSymbol] = useState("AAPL");
-  const canRegister = notRegistered && contest.status === StatusEnum.CREATED;
+  const user = useSelector(getSelfUserSelector);
   const largeScreen = useMediaQuery((theme) => theme.breakpoints.up("sm"));
+
+  const userHaveEnoughMoney = +user.coins >= +contest.coins_entry_fee;
+  const canRegister =
+    notRegistered &&
+    contest.status === StatusEnum.CREATED &&
+    userHaveEnoughMoney;
 
   useEffect(() => {
     if (!canRegister) {
@@ -32,6 +40,11 @@ const RegisterToContestBar = ({ contest, notRegistered = true }) => {
   return (
     <StockClickListenerContext.Provider value={handleStockClick}>
       <Box>
+        {!userHaveEnoughMoney && (
+          <Typography variant="body2">
+            У вас недостаточно денег для регистрации
+          </Typography>
+        )}
         {canRegister && (
           <Button variant="outlined" onClick={onRegisterClick}>
             {openRegisterWidget ? "Закрыть" : "Зарегистрироваться на конкурс"}

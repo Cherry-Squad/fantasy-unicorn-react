@@ -9,11 +9,12 @@ import {
   useMediaQuery,
 } from "@mui/material";
 import { Box } from "@mui/system";
+import { userIdSelector } from "@redux/auth";
 import { registerOnContestThunk } from "@redux/contests";
 import { unwrapResult } from "@reduxjs/toolkit";
 import { useMySnackbar } from "@utils/hooks";
 import React, { useCallback, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import MakeStockListForm from "./MakeStockListForm";
 import SetDirectionsForm from "./SetDirectionsForm";
 import SetMultipliersForm from "./SetMultipliersForm";
@@ -26,6 +27,7 @@ const ContestApplicationCreationWidget = ({ contest, onStockClick }) => {
   const largeScreen = useMediaQuery((theme) => theme.breakpoints.up("sm"));
   const dispatch = useDispatch();
   const { enqueueError, enqueueSuccess } = useMySnackbar();
+  const userId = useSelector(userIdSelector);
 
   const handleOnNextClick = useCallback(
     () => setStep((step) => step + 1),
@@ -42,6 +44,8 @@ const ContestApplicationCreationWidget = ({ contest, onStockClick }) => {
         stocks,
         directions,
         multipliers,
+        userId,
+        payment: +contest.coins_entry_fee,
       })
     )
       .then(unwrapResult)
@@ -55,6 +59,8 @@ const ContestApplicationCreationWidget = ({ contest, onStockClick }) => {
     dispatch,
     enqueueError,
     enqueueSuccess,
+    userId,
+    contest.coins_entry_fee,
   ]);
 
   const canGoNext = (() => {

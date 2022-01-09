@@ -3,24 +3,14 @@ import { useLoadingRedux, useParamSelector } from "@utils/hooks";
 import { getApplicationsByContestIdSelector } from "@redux/contestApplications";
 import { getUserByIdSelector } from "@redux/users";
 import {
-  Divider,
   List,
   ListItem,
   ListItemAvatar,
-  ListItemButton,
   ListItemText,
   Typography,
 } from "@mui/material";
 import { Box } from "@mui/system";
-
-const addSign = (num) => {
-  let n = +num;
-  if (n <= 0) {
-    return n;
-  } else {
-    return `+${n}`;
-  }
-};
+import { addSign } from "@utils/format";
 
 const ScoreItem = ({ application }) => {
   const {
@@ -38,7 +28,7 @@ const ScoreItem = ({ application }) => {
         <Box>
           {!!finalPosition && (
             <Typography variant="body2">
-              FP: {addSign(fantasyPointsDelta)}, C: {addSign(coinsDelta)}
+              ΔFP: {addSign(fantasyPointsDelta)}, ΔC: {addSign(coinsDelta)}
             </Typography>
           )}
         </Box>
@@ -59,10 +49,10 @@ const ContestScoreboardWidget = ({ contest }) => {
     <List>
       {applications
         .sort((a, b) =>
-          !!a && !!b ? +a.final_position < +b.final_position : +a.id < +b.id
+          !!a && !!b ? +a.final_position - +b.final_position : +a.id - +b.id
         )
         .map((app) => (
-          <ScoreItem application={app} />
+          <ScoreItem key={app.id} application={app} />
         ))}
     </List>
   );

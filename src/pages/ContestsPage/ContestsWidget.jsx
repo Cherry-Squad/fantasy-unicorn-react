@@ -6,13 +6,23 @@ import React, { useMemo } from "react";
 import { useSelector } from "react-redux";
 import ContestCard from "./ContestCard";
 import RefreshIcon from "@mui/icons-material/Refresh";
+import { StatusEnum } from "@dict/contest";
 
 const ContestsWidget = () => {
   const { loading, execute } = useLoadingRedux(getAllContestsThunk, {
     enqueue: true,
   });
 
-  const contests = useSelector(getAllContestsSelector);
+  const contests = useSelector(getAllContestsSelector).sort((a, b) => {
+    if (a.status !== b.status) {
+      const map = { [StatusEnum.CREATED]: 1, [StatusEnum.REG_ENDED]: 2 };
+      return map[a.status] - map[b.status];
+    } else if (a.status === StatusEnum.REG_ENDED) {
+      return Date.parse(a.reg_ending_at) - Date.parse(b.reg_ending_at);
+    } else {
+      return Date.parse(a.summarizing_at) - Date.parse(b.summarizing_at);
+    }
+  });
 
   // uwc-debug
   const cards = useMemo(
