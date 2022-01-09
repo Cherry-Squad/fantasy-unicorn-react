@@ -3,13 +3,14 @@ import BusinessCenterIcon from "@mui/icons-material/BusinessCenter";
 import { Box } from "@mui/system";
 import { Typography } from "@mui/material";
 
-const FantasyPointsThresholdBadge = ({ value }) => (
+const FantasyPointsThresholdBadge = ({ value, sx = {}, appendLess = true }) => (
   <Box
     sx={{
       display: "flex",
       width: "100%",
       height: "24px",
       alignContent: "center",
+      ...sx,
     }}
   >
     <Box>
@@ -17,7 +18,7 @@ const FantasyPointsThresholdBadge = ({ value }) => (
     </Box>
     <Box sx={{ flexGrow: 2 }}>
       <Typography variant="body1" sx={{ textAlign: "right" }}>
-        {"<" + +value}
+        {appendLess ? "<" + +value : value}
       </Typography>
     </Box>
   </Box>

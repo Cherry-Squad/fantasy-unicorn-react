@@ -1,121 +1,118 @@
-import FullTradingWidget from "@components/FullTradingWidget";
-import StockClickListenerContext from "@components/StockClickListenerContext";
-import { StatusEnum } from "@dict/contest";
-import { Button, Divider, LinearProgress, useMediaQuery } from "@mui/material";
+import { Chip, Typography } from "@mui/material";
 import { Box } from "@mui/system";
-import { getApplicationStocksForContestIdThunk } from "@redux/applicationStocks";
 import {
-  getApplicationsOfContestThunk,
-  getSelfUserApplicationByContestIdSelector,
-} from "@redux/contestApplications";
-import { useLoadingRedux, useParamSelector } from "@utils/hooks";
-import React, { useCallback, useEffect, useState } from "react";
-import ContestApplicationCreationWidget from "./ContestApplicationCreation";
+  getApplicationsByApplicationIdSelector,
+  getApplicationStocksForContestIdThunk,
+} from "@redux/applicationStocks";
+import { getStocksByIdsSelector } from "@redux/stocks";
+import { unwrapResult } from "@reduxjs/toolkit";
+import { useMySnackbar, useParamSelector } from "@utils/hooks";
+import React, { useCallback, useMemo } from "react";
+import { useDispatch } from "react-redux";
+import { useIntervalWhen } from "rooks";
+import { StatusEnum } from "@dict/contest";
+import CoinsEntryFeeBadge from "@pages/ContestsPage/CoinsEntryFeeBadge";
+import FantasyPointsThresholdBadge from "@pages/ContestsPage/FantasyPointsThresholdBadge";
 
-const RegisterToContestBar = ({ contest, application }) => {
-  const [openRegisterWidget, setOpenRegisterWidget] = useState(false);
-  const [symbol, setSymbol] = useState("AAPL");
-  const canRegister = !application && contest.status === StatusEnum.CREATED;
-  const largeScreen = useMediaQuery((theme) => theme.breakpoints.up("sm"));
-
-  useEffect(() => {
-    if (!canRegister) {
-      setOpenRegisterWidget(false);
-    }
-  }, [canRegister, setOpenRegisterWidget]);
-
-  const onRegisterClick = useCallback(() => {
-    setOpenRegisterWidget((v) => !v);
-  }, [setOpenRegisterWidget]);
-
-  const handleStockClick = useCallback(
-    (name) => {
-      setSymbol(name);
-    },
-    [setSymbol]
-  );
-
+const StockItem = ({ application, applicationStocks, stock }) => {
+  const {
+    reg_price: regPrice,
+    final_price: finalPrice,
+    multiplier,
+    direction_up: directionUp,
+  } = applicationStocks.find((app) => +app.stock_id === +stock.id);
   return (
-    <StockClickListenerContext.Provider value={handleStockClick}>
-      <Box>
-        {canRegister && (
-          <Button variant="outlined" onClick={onRegisterClick}>
-            {openRegisterWidget ? "Закрыть" : "Зарегистрироваться на конкурс"}
-          </Button>
-        )}
-        {openRegisterWidget && (
-          <Box
-            sx={{
-              display: "flex",
-              gap: 2,
-              mt: 2,
-              flexDirection: largeScreen ? "row" : "column",
-            }}
-          >
-            <ContestApplicationCreationWidget
-              contest={contest}
-              onStockClick={handleStockClick}
-            />
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                height: largeScreen ? undefined : "500px",
-                flexGrow: 1,
-              }}
-            >
-              <FullTradingWidget
-                sx={{
-                  height: "100%",
-                }}
-                symbol={symbol}
-              />
-            </Box>
-          </Box>
-        )}
-      </Box>
-    </StockClickListenerContext.Provider>
+    <Chip
+      label={`${stock.name} $${regPrice}${
+        directionUp ? "↗" : "↘"
+      } x${multiplier} ${!!finalPrice ? `итог: $${finalPrice}` : ""}`}
+      variant="outlined"
+      sx={{ m: 1 }}
+    />
   );
 };
 
-const ApplicationViewer = ({ contest, application }) => {
-  return <Box>{application.id}</Box>;
-};
-
-const ApplicationWidget = ({ contest }) => {
-  const { loading: applicationsLoading } = useLoadingRedux(
-    getApplicationsOfContestThunk,
-    {
-      enqueue: true,
-      params: { contestId: contest.id },
-    }
+const ApplicationWidget = ({
+  contest,
+  application,
+  showMonetaryStats = true,
+}) => {
+  const dispatch = useDispatch();
+  const { enqueueError } = useMySnackbar();
+  const applicationStocks = useParamSelector(
+    getApplicationsByApplicationIdSelector,
+    { applicationId: application.id }
   );
 
-  const { loading: stocksLoading } = useLoadingRedux(
-    getApplicationStocksForContestIdThunk,
-    {
-      enqueue: true,
-      params: { contestId: contest.id },
-    }
+  const stockIds = useMemo(
+    () => applicationStocks?.map(({ stock_id }) => stock_id) || [],
+    [applicationStocks]
   );
 
-  const userApplication = useParamSelector(
-    getSelfUserApplicationByContestIdSelector,
-    { contestId: contest.id }
+  const stocks = useParamSelector(getStocksByIdsSelector, { ids: stockIds });
+
+  const applicationRegProcessed = applicationStocks
+    ? applicationStocks?.every(({ regPrice }) => regPrice !== null)
+    : false;
+
+  const contestIsOver =
+    contest.status === StatusEnum.FINISHED && applicationRegProcessed;
+
+  const handleInterval = useCallback(
+    () =>
+      dispatch(getApplicationStocksForContestIdThunk({ contestId: contest.id }))
+        .then(unwrapResult)
+        .catch((e) => enqueueError(e?.message || e?.data || e)),
+    [contest.id, dispatch, enqueueError]
   );
 
-  if (applicationsLoading || stocksLoading) {
-    return <LinearProgress />;
-  }
+  useIntervalWhen(handleInterval, 10 * 1000, !applicationRegProcessed, true);
 
   return (
     <Box>
-      <RegisterToContestBar contest={contest} application={userApplication} />
-      {!!userApplication && (
+      {contestIsOver && (
         <>
-          <Divider sx={{ mt: 1, mb: 1 }} />
-          <ApplicationViewer contest={contest} application={userApplication} />
+          <Box sx={{ display: "flex" }}>
+            <Typography variant="body1" sx={{ flexGrow: 1 }}>
+              Итоговая позиция:
+            </Typography>
+            <Typography variant="h6">{application.final_position}</Typography>
+          </Box>
+          {showMonetaryStats && (
+            <Box
+              sx={{
+                display: "flex",
+                flexWrap: "wrap",
+                justifyContent: "space-around",
+                width: "100%",
+              }}
+            >
+              <CoinsEntryFeeBadge
+                value={application.coins_delta}
+                sx={{ width: "150px" }}
+              />
+              <FantasyPointsThresholdBadge
+                value={application.fantasy_points_delta}
+                sx={{ width: "150px" }}
+                appendLess={false}
+              />
+            </Box>
+          )}
         </>
+      )}
+      {applicationRegProcessed ? (
+        <Box sx={{ display: "flex", flexWrap: "wrap" }}>
+          {stocks?.map((stock) => (
+            <StockItem
+              key={stock.name}
+              application={application}
+              applicationStocks={applicationStocks}
+              stock={stock}
+            />
+          ))}
+        </Box>
+      ) : (
+        <Box>Ваша ставка обрабатывается...</Box>
       )}
     </Box>
   );

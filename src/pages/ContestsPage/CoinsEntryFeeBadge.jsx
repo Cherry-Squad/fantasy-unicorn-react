@@ -3,13 +3,14 @@ import React from "react";
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import { Typography } from "@mui/material";
 
-const CoinsEntryFeeBadge = ({ value }) => (
+const CoinsEntryFeeBadge = ({ value, sx = {} }) => (
   <Box
     sx={{
       display: "flex",
       width: "100%",
       height: "24px",
       alignContent: "center",
+      ...sx,
     }}
   >
     <Box>

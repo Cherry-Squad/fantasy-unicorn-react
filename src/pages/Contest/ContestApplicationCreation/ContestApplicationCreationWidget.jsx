@@ -9,7 +9,11 @@ import {
   useMediaQuery,
 } from "@mui/material";
 import { Box } from "@mui/system";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { registerOnContestThunk } from "@redux/contests";
+import { unwrapResult } from "@reduxjs/toolkit";
+import { useMySnackbar } from "@utils/hooks";
+import React, { useCallback, useState } from "react";
+import { useDispatch } from "react-redux";
 import MakeStockListForm from "./MakeStockListForm";
 import SetDirectionsForm from "./SetDirectionsForm";
 import SetMultipliersForm from "./SetMultipliersForm";
@@ -20,6 +24,8 @@ const ContestApplicationCreationWidget = ({ contest, onStockClick }) => {
   const [multipliers, setMultipliers] = useState({});
   const [step, setStep] = useState(0);
   const largeScreen = useMediaQuery((theme) => theme.breakpoints.up("sm"));
+  const dispatch = useDispatch();
+  const { enqueueError, enqueueSuccess } = useMySnackbar();
 
   const handleOnNextClick = useCallback(
     () => setStep((step) => step + 1),
@@ -30,8 +36,26 @@ const ContestApplicationCreationWidget = ({ contest, onStockClick }) => {
     [setStep]
   );
   const handleOnSubmitClick = useCallback(() => {
-    console.log(stocks, directions, multipliers);
-  }, [stocks, directions, multipliers]);
+    dispatch(
+      registerOnContestThunk({
+        contestId: contest.id,
+        stocks,
+        directions,
+        multipliers,
+      })
+    )
+      .then(unwrapResult)
+      .then(() => enqueueSuccess("Вы успешно зарегистрированы!"))
+      .catch((e) => enqueueError(e?.message || e?.data || e));
+  }, [
+    stocks,
+    directions,
+    multipliers,
+    contest.id,
+    dispatch,
+    enqueueError,
+    enqueueSuccess,
+  ]);
 
   const canGoNext = (() => {
     switch (step) {

@@ -5,7 +5,6 @@ import {
   ListItemButton,
   ListItemText,
 } from "@mui/material";
-import { stock } from "@validation/normalizr";
 import React, { useCallback, useContext, useMemo } from "react";
 import StockClickListenerContext from "./StockClickListenerContext";
 

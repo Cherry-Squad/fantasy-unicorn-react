@@ -4,6 +4,8 @@ import { Box } from "@mui/system";
 import React from "react";
 import ContestStatusIcon from "./ContestStatusIcon";
 import ContestModsIconBar from "@components/ContestModsIconBar";
+import RegisterToContestBar from "./RegisterToContestBar";
+import { getSelfUserApplicationByContestIdSelector } from "@redux/contestApplications";
 import { useParamSelector } from "@utils/hooks";
 import ApplicationWidget from "./ApplicationWidget";
 
@@ -22,6 +24,11 @@ const ContestWidget = ({ contest }) => {
     use_inverted_stock_prices: useInvertedStockPrices,
     created_at: createdAt,
   } = contest;
+
+  const userApplication = useParamSelector(
+    getSelfUserApplicationByContestIdSelector,
+    { contestId: contest.id }
+  );
 
   return (
     <Box>
@@ -55,7 +62,14 @@ const ContestWidget = ({ contest }) => {
         </Box>
       </Box>
       <Divider sx={{ mt: 1, mb: 1 }} />
-      <ApplicationWidget contest={contest} />
+      {!userApplication ? (
+        <RegisterToContestBar contest={contest} notRegistered />
+      ) : (
+        <>
+          <Typography variant="h6">Ваша ставка</Typography>
+          <ApplicationWidget contest={contest} application={userApplication} />
+        </>
+      )}
     </Box>
   );
 };

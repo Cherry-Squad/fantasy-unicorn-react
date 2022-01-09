@@ -71,7 +71,7 @@ const StockItem = ({
 };
 
 const pushOneMultiplier = (multipliers, m, stock) => {
-  const maxLengths = { "s0.5": 3, "s1.0": 4, "s1.5": 3 };
+  const maxLengths = { "s0.5": 2, "s1.0": 1, "s1.5": 2 };
   const out = { [stock.id]: m };
   const currentStats = { "s0.5": 0, "s1.0": 0, "s1.5": 0 };
   currentStats[m] = 1;
@@ -159,7 +159,7 @@ const SetMultipliersForm = ({
     <Box>
       <Typography variant="body2">
         Множители отвечают за то, сколько вы получите очков за успешное
-        предсказание
+        предсказание. Выберите две акции с x1.5, одну с x1.0 и две с x0.5.
       </Typography>
       <List>{rendered}</List>
     </Box>

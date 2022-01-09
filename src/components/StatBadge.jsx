@@ -9,8 +9,10 @@ const StatBadge = ({ icon: Icon, value }) => (
       display: "flex",
       m: 1,
       minWidth: "120px",
-      height: "24px",
       alignContent: "center",
+      border: "1px solid #42a5f5",
+      borderRadius: 2,
+      p: 1,
     }}
   >
     <Icon fontSize="small" />

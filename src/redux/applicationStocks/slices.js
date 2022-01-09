@@ -1,3 +1,4 @@
+import { registerOnContestThunk } from "@redux/contests";
 import { createSlice, createEntityAdapter, isAnyOf } from "@reduxjs/toolkit";
 import { entityAdapterWithExtract } from "@utils/redux";
 import { getApplicationStocksForContestIdThunk } from ".";
@@ -13,7 +14,10 @@ export const applicationStocks = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder.addMatcher(
-      isAnyOf(getApplicationStocksForContestIdThunk.fulfilled),
+      isAnyOf(
+        getApplicationStocksForContestIdThunk.fulfilled,
+        registerOnContestThunk.fulfilled
+      ),
       (state, { payload }) => {
         myApplicationStocksAdapter.upsertManyFromPayload(state, payload);
       }

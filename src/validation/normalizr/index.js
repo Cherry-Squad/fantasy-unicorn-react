@@ -11,7 +11,7 @@ export const stock = new schema.Entity("stocks");
 export const contestApplication = new schema.Entity("contestApplications");
 
 export const contestApplicationStocks = new schema.Entity(
-  "contestApplicationsStocks",
+  "contestApplicationStocks",
   {
     stock,
   }
