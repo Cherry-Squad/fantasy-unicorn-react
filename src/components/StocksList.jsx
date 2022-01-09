@@ -1,16 +1,40 @@
-import { Divider, List, ListItem, ListItemText } from "@mui/material";
-import React, { useMemo } from "react";
+import {
+  Divider,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemText,
+} from "@mui/material";
+import { stock } from "@validation/normalizr";
+import React, { useCallback, useContext, useMemo } from "react";
+import StockClickListenerContext from "./StockClickListenerContext";
+
+const StockItem = ({ stock }) => {
+  const { name } = stock;
+  const onStockClick = useContext(StockClickListenerContext);
+
+  const handleClick = useCallback(
+    () => onStockClick?.(stock.name),
+    [onStockClick, stock.name]
+  );
+
+  return (
+    <ListItem disablePadding>
+      <ListItemButton onClick={handleClick}>
+        <ListItemText primary={name} />
+      </ListItemButton>
+    </ListItem>
+  );
+};
 
 const StocksList = ({ size, content, ...props }) => {
   const mappedContent = useMemo(
     () =>
       content
         .sort((a, b) => a.name.localeCompare(b.name))
-        .map(({ name }) => (
-          <React.Fragment key={name}>
-            <ListItem disablePadding>
-              <ListItemText primary={name} />
-            </ListItem>
+        .map((stock) => (
+          <React.Fragment key={stock.name}>
+            <StockItem stock={stock} />
             <Divider sx={{ mt: 1, mb: 1 }} />
           </React.Fragment>
         )),

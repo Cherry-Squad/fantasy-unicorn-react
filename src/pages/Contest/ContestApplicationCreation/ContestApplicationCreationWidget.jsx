@@ -6,6 +6,7 @@ import {
   StepLabel,
   Stepper,
   Typography,
+  useMediaQuery,
 } from "@mui/material";
 import { Box } from "@mui/system";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
@@ -13,26 +14,12 @@ import MakeStockListForm from "./MakeStockListForm";
 import SetDirectionsForm from "./SetDirectionsForm";
 import SetMultipliersForm from "./SetMultipliersForm";
 
-const ContestApplicationCreationWidget = ({ contest }) => {
-  const {
-    id,
-    status,
-    reg_ending_at: regEndingAt,
-    summarizing_at: summarizingAt,
-    coins_entry_fee: coinsEntryFee,
-    max_fantasy_points_threshold: maxFantasyPointsThreshold,
-    use_briefcase_only: useBriefcaseOnly,
-    direction_strategy: directionStrategy,
-    fixed_direction_up: fixedDirectionUp,
-    use_disabled_multipliers: useDisabledMultipliers,
-    use_inverted_stock_prices: useInvertedStockPrices,
-    created_at: createdAt,
-  } = contest;
-
+const ContestApplicationCreationWidget = ({ contest, onStockClick }) => {
   const [stocks, setStocks] = useState([]);
   const [directions, setDirections] = useState({});
   const [multipliers, setMultipliers] = useState({});
   const [step, setStep] = useState(0);
+  const largeScreen = useMediaQuery((theme) => theme.breakpoints.up("sm"));
 
   const handleOnNextClick = useCallback(
     () => setStep((step) => step + 1),
@@ -44,7 +31,7 @@ const ContestApplicationCreationWidget = ({ contest }) => {
   );
   const handleOnSubmitClick = useCallback(() => {
     console.log(stocks, directions, multipliers);
-  });
+  }, [stocks, directions, multipliers]);
 
   const canGoNext = (() => {
     switch (step) {
@@ -64,7 +51,11 @@ const ContestApplicationCreationWidget = ({ contest }) => {
       <Typography variant="h5" gutterBottom>
         Регистрация на конкурс
       </Typography>
-      <Stepper activeStep={step} sx={{ p: 2 }}>
+      <Stepper
+        activeStep={step}
+        sx={{ p: 2 }}
+        orientation={largeScreen ? "horizontal" : "vertical"}
+      >
         <Step>
           <StepLabel>Выберите акции</StepLabel>
         </Step>
@@ -81,6 +72,7 @@ const ContestApplicationCreationWidget = ({ contest }) => {
           contest={contest}
           stocks={stocks}
           setStocks={setStocks}
+          onStockClick={onStockClick}
         />
       )}
       {step === 1 && (
@@ -89,6 +81,7 @@ const ContestApplicationCreationWidget = ({ contest }) => {
           stocks={stocks}
           directions={directions}
           setDirections={setDirections}
+          onStockClick={onStockClick}
         />
       )}
       {step === 2 && (
@@ -98,6 +91,7 @@ const ContestApplicationCreationWidget = ({ contest }) => {
           directions={directions}
           multipliers={multipliers}
           setMultipliers={setMultipliers}
+          onStockClick={onStockClick}
         />
       )}
       <Box sx={{ display: "flex", justifyContent: "space-between", p: 2 }}>

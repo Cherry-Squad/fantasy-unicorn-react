@@ -4,6 +4,8 @@ import { Box } from "@mui/system";
 import React from "react";
 import ContestStatusIcon from "./ContestStatusIcon";
 import ContestModsIconBar from "@components/ContestModsIconBar";
+import { useParamSelector } from "@utils/hooks";
+import ApplicationWidget from "./ApplicationWidget";
 
 const ContestWidget = ({ contest }) => {
   const {
@@ -53,6 +55,7 @@ const ContestWidget = ({ contest }) => {
         </Box>
       </Box>
       <Divider sx={{ mt: 1, mb: 1 }} />
+      <ApplicationWidget contest={contest} />
     </Box>
   );
 };

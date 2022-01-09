@@ -2,13 +2,16 @@ import {
   Divider,
   List,
   ListItem,
+  ListItemButton,
   ListItemText,
   ToggleButton,
   ToggleButtonGroup,
   Typography,
 } from "@mui/material";
 import { Box } from "@mui/system";
-import React, { useCallback, useEffect, useMemo } from "react";
+import React, { useCallback, useContext, useEffect, useMemo } from "react";
+import StockDirectionIcon from "@components/StockDirectionIcon";
+import StockClickListenerContext from "@components/StockClickListenerContext";
 
 const StockItem = ({
   contest,
@@ -18,6 +21,8 @@ const StockItem = ({
   setMultiplier,
   disableChange,
 }) => {
+  const onStockClick = useContext(StockClickListenerContext);
+
   const multiplier = multipliers[stock.id];
 
   const handleChange = useCallback(
@@ -27,11 +32,23 @@ const StockItem = ({
     [setMultiplier, stock, disableChange]
   );
 
+  const handleClick = useCallback(
+    () => onStockClick?.(stock.name),
+    [onStockClick, stock.name]
+  );
+
   return (
     <>
       <ListItem
         secondaryAction={
-          <>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+            <Box>
+              <StockDirectionIcon
+                up={direction === "up"}
+                down={direction === "down"}
+                colored
+              />
+            </Box>
             <ToggleButtonGroup
               value={multiplier}
               exclusive
@@ -41,14 +58,38 @@ const StockItem = ({
               <ToggleButton value="s1.0">1.0</ToggleButton>
               <ToggleButton value="s1.5">1.5</ToggleButton>
             </ToggleButtonGroup>
-          </>
+          </Box>
         }
       >
-        <ListItemText primary={stock.name} />
+        <ListItemButton onClick={handleClick}>
+          <ListItemText primary={<>{stock.name}</>} />
+        </ListItemButton>
       </ListItem>
       <Divider sx={{ mt: 1, mb: 1 }} />
     </>
   );
+};
+
+const pushOneMultiplier = (multipliers, m, stock) => {
+  const maxLengths = { "s0.5": 3, "s1.0": 4, "s1.5": 3 };
+  const out = { [stock.id]: m };
+  const currentStats = { "s0.5": 0, "s1.0": 0, "s1.5": 0 };
+  currentStats[m] = 1;
+  const allMultipliers = Object.keys(maxLengths);
+  for (const otherStockId in multipliers) {
+    if (+otherStockId === +stock.id) continue;
+
+    const oldOtherMultiplier = multipliers[otherStockId];
+
+    const newOtherMultiplier =
+      currentStats[oldOtherMultiplier] < maxLengths[oldOtherMultiplier]
+        ? oldOtherMultiplier
+        : allMultipliers.find((mult) => currentStats[mult] < maxLengths[mult]);
+
+    out[+otherStockId] = newOtherMultiplier;
+    currentStats[newOtherMultiplier]++;
+  }
+  return out;
 };
 
 const SetMultipliersForm = ({
@@ -79,78 +120,12 @@ const SetMultipliersForm = ({
     [setMultipliers, stocks]
   );
 
-  // const pushOneMultiplier = useCallback((multipliers, m, stock) => {
-  //   const stats = Object.entries(multipliers).reduce(
-  //     (acc, [id, v]) => {
-  //       if (+id !== +stock.id) acc[v].push(id);
-  //       return acc;
-  //     },
-  //     {
-  //       "s0.5": [],
-  //       "s1.0": [],
-  //       "s1.5": [],
-  //     }
-  //   );
-  //   const maxLengths = { "s0.5": 3, "s1.0": 4, "s1.5": 3 };
-  //   if (stats[m].length >= maxLengths[m]) {
-  //     const order = [
-  //       ...new Set(Object.keys(stats)),
-  //       ...new Set(Object.keys(stats)),
-  //     ];
-  //     const bag = stats[m].splice(0, stats[m].length - maxLengths[m] + 1);
-  //     for (let i = 1; i < order.length; i++) {
-  //       const key = order[i];
-  //       if (key === m) continue;
-  //       const stat = stats[key].length;
-  //       if (stat > maxLengths[key]) {
-  //         bag.push(...stats[key].splice(0, stat - maxLengths[key] + 1));
-  //       } else {
-  //         stats[key].push(...bag.splice(0, maxLengths[key] - stat));
-  //       }
-  //     }
-  //     return {
-  //       ...Object.fromEntries(
-  //         Object.entries(stats).flatMap(([key, ids]) =>
-  //           ids.map((id) => [+id, key])
-  //         )
-  //       ),
-  //       [stock.id]: m,
-  //     };
-  //   } else {
-  //     return { ...multipliers, [stock.id]: m };
-  //   }
-  // }, []);
-
-  const pushOneMultiplier = useCallback((multipliers, m, stock) => {
-    const maxLengths = { "s0.5": 3, "s1.0": 4, "s1.5": 3 };
-    const out = { [stock.id]: m };
-    const currentStats = { "s0.5": 0, "s1.0": 0, "s1.5": 0 };
-    currentStats[m] = 1;
-    const allMultipliers = Object.keys(maxLengths);
-    for (const otherStockId in multipliers) {
-      if (+otherStockId === +stock.id) continue;
-
-      const oldOtherMultiplier = multipliers[otherStockId];
-
-      const newOtherMultiplier =
-        currentStats[oldOtherMultiplier] < maxLengths[oldOtherMultiplier]
-          ? oldOtherMultiplier
-          : allMultipliers.find(
-              (mult) => currentStats[mult] < maxLengths[mult]
-            );
-
-      out[+otherStockId] = newOtherMultiplier;
-      currentStats[newOtherMultiplier]++;
-    }
-    return out;
-  }, []);
-
   const setMultiplier = useCallback(
     (value, stock) =>
       setMultipliers((multipliers) =>
         pushOneMultiplier(multipliers, value, stock)
       ),
-    [pushOneMultiplier, setMultipliers]
+    [setMultipliers]
   );
 
   useEffect(() => {

@@ -43,10 +43,10 @@ export const entityAdapterWithExtract = (
     { name = defaultNormalizedName, mustBeObject = false, mustBeArray = false }
   ) => {
     assertPayloadCorrect(payload);
-    const { entities, result } = payload;
-    return (mustBeArray || result instanceof Array) && !mustBeObject
-      ? result?.map((id) => entities?.[name]?.[id])?.filter((id) => !!id) || []
-      : entities?.[name]?.[result];
+    const { entities } = payload;
+    return mustBeArray && !mustBeObject
+      ? Object.values(entities?.[name] || {})
+      : Object.values(entities?.[name] || {})[0];
   };
 
   const extractById = (payload, id, { name = defaultNormalizedName }) => {

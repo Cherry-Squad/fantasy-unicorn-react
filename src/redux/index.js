@@ -8,6 +8,8 @@ import users from "./users";
 import contests from "./contests";
 import briefcases from "./briefcases";
 import stocks from "./stocks";
+import contestApplications from "./contestApplications";
+import applicationStocks from "./applicationStocks";
 
 const store = (() => {
   const reducer = combineReducers({
@@ -17,6 +19,8 @@ const store = (() => {
     contests,
     stocks,
     briefcases,
+    contestApplications,
+    applicationStocks,
   });
 
   const store = configureStore({ reducer });

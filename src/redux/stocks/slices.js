@@ -1,3 +1,4 @@
+import { getApplicationStocksForContestIdThunk } from "@redux/applicationStocks";
 import { getStocksOfBriefcaseThunk } from "@redux/briefcases/thunks";
 import { createSlice, createEntityAdapter, isAnyOf } from "@reduxjs/toolkit";
 import { entityAdapterWithExtract } from "@utils/redux";
@@ -30,7 +31,10 @@ export const stocks = createSlice({
       }
     );
     builder.addMatcher(
-      isAnyOf(getStocksOfBriefcaseThunk.fulfilled),
+      isAnyOf(
+        getStocksOfBriefcaseThunk.fulfilled,
+        getApplicationStocksForContestIdThunk.fulfilled
+      ),
       (state, { payload }) => {
         myStockAdapter.upsertManyFromPayload(state, payload);
       }

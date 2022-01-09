@@ -20,6 +20,7 @@ const ContestPage = () => {
     enqueue: true,
     params: { id },
   });
+
   const contest = useParamSelector(getContestByIdSelector, { id });
 
   return (

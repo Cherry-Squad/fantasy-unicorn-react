@@ -1,3 +1,4 @@
+import { getApplicationsOfContestThunk } from "@redux/contestApplications";
 import { createSlice, createEntityAdapter, isAnyOf } from "@reduxjs/toolkit";
 import { entityAdapterWithExtract } from "@utils/redux";
 import { getContestByIdThunk } from ".";

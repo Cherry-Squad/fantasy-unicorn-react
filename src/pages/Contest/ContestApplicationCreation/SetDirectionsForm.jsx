@@ -1,7 +1,15 @@
-import { Divider, List, ListItem, ListItemText, Radio } from "@mui/material";
-import React, { useCallback, useEffect, useMemo } from "react";
+import {
+  Divider,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemText,
+  Radio,
+} from "@mui/material";
+import React, { useCallback, useContext, useEffect, useMemo } from "react";
 import StockDirectionIcon from "@components/StockDirectionIcon";
 import { DirectionStrategyEnum } from "@dict/contest";
+import StockClickListenerContext from "@components/StockClickListenerContext";
 
 const StockItem = ({
   contest,
@@ -10,6 +18,8 @@ const StockItem = ({
   setDirection,
   disableChange,
 }) => {
+  const onStockClick = useContext(StockClickListenerContext);
+
   const handleChange = useCallback(
     (event) => {
       if (!disableChange) setDirection(event.target.value, stock);
@@ -17,6 +27,11 @@ const StockItem = ({
     [setDirection, stock, disableChange]
   );
   const direction = directions[stock.id];
+
+  const handleClick = useCallback(
+    () => onStockClick?.(stock.name),
+    [onStockClick, stock.name]
+  );
 
   return (
     <>
@@ -40,7 +55,9 @@ const StockItem = ({
           </>
         }
       >
-        <ListItemText primary={stock.name} />
+        <ListItemButton onClick={handleClick}>
+          <ListItemText primary={stock.name} />
+        </ListItemButton>
       </ListItem>
       <Divider sx={{ mt: 1, mb: 1 }} />
     </>
